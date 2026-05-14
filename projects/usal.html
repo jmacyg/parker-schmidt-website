@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Usal Project &times; REI — Ode to Nature — Parker Schmidt</title>
+  <link rel="icon" type="image/png" href="../favicon.png" />
+  <link rel="stylesheet" href="../assets/css/site.css" />
+  <style>
+    /* =========================================================
+       Project page — reusable template
+       Duplicate this file per project, change:
+         - <title>
+         - hero iframe src
+         - .pp-meta values
+         - .pp-gallery images
+         - .pp-credits-col location + credits
+       ========================================================= */
+
+    /* Page wrapper */
+    #page-project { padding: 80px 20px 0; }
+    .pp-wrap { position: relative; max-width: 100%; }
+
+    /* ===== Hero video ===== */
+    .pp-hero {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #050505;
+      overflow: hidden;
+    }
+    .pp-iframe-wrap {
+      position: absolute;
+      inset: 0;
+    }
+    .pp-iframe-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Custom controls overlaid on the video */
+    .pp-controls {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      display: flex;
+      align-items: center;
+      padding: 14px 16px 12px;
+      background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0));
+      opacity: 0;
+      transition: opacity .2s;
+      pointer-events: none;
+    }
+    .pp-hero:hover .pp-controls,
+    .pp-hero.show-controls .pp-controls { opacity: 1; pointer-events: auto; }
+    .pp-ctrl-left, .pp-ctrl-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .pp-ctrl-left { margin-right: auto; }
+    .pp-ctrl-btn {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pp-time {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .06em;
+      color: rgba(255,255,255,0.75);
+    }
+    .pp-progress-wrap {
+      position: absolute;
+      left: 16px; right: 16px;
+      bottom: 36px;
+      height: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .pp-progress-bg {
+      width: 100%;
+      height: 2px;
+      background: rgba(255,255,255,0.18);
+      position: relative;
+    }
+    .pp-progress-fill {
+      height: 100%;
+      background: rgba(255,255,255,0.8);
+      width: 0%;
+    }
+
+    /* ===== Info row directly below the hero (mirrors home-page work-row) ===== */
+    .pp-info-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 96px;
+      padding: 10px 8px;
+      margin: 20px 0 0;
+      border-top: .5px solid rgba(255,255,255,0.08);
+      border-bottom: .5px solid rgba(255,255,255,0.08);
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+    }
+    .pp-info-row > div { min-width: 0; }
+
+    /* ===== Meta strip (Year / Director / Client / Name / Role) ===== */
+    .pp-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 48px;
+      padding: 28px 0 36px;
+    }
+    .pp-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .pp-meta-label {
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+    }
+    .pp-meta-val {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ===== Body: gallery (left) + credits (right) ===== */
+    .pp-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+      column-gap: 20px;
+      align-items: start;
+      padding-top: 36px;
+    }
+    .pp-desc-col,
+    .pp-credits-col {
+      min-width: 0;
+      width: 100%;
+    }
+
+    /* Gallery */
+    .pp-gallery { width: 100%; }
+    .pp-gallery-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+    }
+    .pp-gimg {
+      width: 100%;
+      overflow: hidden;
+      background: #050505;
+    }
+    .pp-gimg img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Credits column */
+    .pp-credits-col { /* no extra inset; grid gap handles spacing */ }
+    .pp-location-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 36px;
+    }
+    .pp-loc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 0 8px;
+      margin: 0 -8px;
+    }
+    .pp-loc-label,
+    .pp-loc-val {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      line-height: 1.6;
+    }
+    .pp-loc-label { color: rgba(255,255,255,0.32); }
+    .pp-loc-val   { color: rgba(255,255,255,0.75); text-align: right; }
+
+    .pp-credits-title {
+      display: block;
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      margin-bottom: 18px;
+    }
+    .pp-credit-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 6px 8px;
+      margin: 0 -8px;
+      border-bottom: .5px solid rgba(255,255,255,0.08);
+    }
+    .pp-credit-role,
+    .pp-credit-name {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      line-height: 1.5;
+    }
+    .pp-credit-role { color: rgba(255,255,255,0.45); }
+    .pp-credit-name { color: rgba(255,255,255,0.75); text-align: right; }
+
+    /* ===== Footer (identical to works/bio) ===== */
+    #idx-footer {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      padding: 24px 0 48px;
+      margin: 58px 0 0;
+      border-top: .5px solid rgba(255,255,255,0.08);
+      column-gap: 24px;
+    }
+    #idx-footer > * { padding-right: 32px; }
+    #idx-footer > *:last-child { padding-right: 0; }
+    #idx-footer .foot-eyebrow {
+      font-size: 8px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      margin-bottom: 18px;
+    }
+    #idx-footer .foot-stack { display: flex; flex-direction: column; gap: 6px; }
+    #idx-footer .foot-stack a {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      line-height: 1.6;
+      transition: color .12s;
+    }
+    #idx-footer .foot-stack a:hover { color: rgba(255,255,255,0.95); }
+    #idx-footer .foot-address {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.32);
+      line-height: 1.7;
+      margin-top: 24px;
+    }
+    #idx-footer .foot-rep { display: flex; flex-direction: column; gap: 6px; }
+    #idx-footer .foot-rep-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      text-decoration: none;
+      padding: 0 8px;
+      margin: 0 -8px;
+      transition: background .12s;
+    }
+    #idx-footer .foot-rep-row:hover { background: rgba(255,255,255,0.03); }
+    #idx-footer .foot-rep-row span {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+      transition: color .12s;
+    }
+    #idx-footer .foot-rep-row:hover span { color: rgba(255,255,255,0.95); }
+    #idx-footer .foot-legal {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.32);
+      line-height: 1.85;
+    }
+    #idx-footer .foot-legal a {
+      color: inherit;
+      text-decoration: none;
+      transition: color .12s;
+    }
+    #idx-footer .foot-legal a:hover { color: rgba(255,255,255,0.95); }
+
+    #bottom-bar { display: none; }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 768px) {
+      #page-project { padding: 140px 10px 0; }
+
+      /* Info row: stack into pairs with dividers between each ROW */
+      .pp-info-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        padding: 0;
+      }
+      .pp-info-row > div {
+        padding: 10px 8px;
+        border-bottom: .5px solid rgba(255,255,255,0.08);
+      }
+      /* Last item (Shot On) moves to the right column of row 3, leaving left empty */
+      .pp-info-row > div:nth-child(5) {
+        grid-column: 2 / 3;
+        border-bottom: none;
+      }
+
+      .pp-meta { gap: 24px; padding: 20px 0 28px; }
+      #pp-divider { display: none !important; }
+      .pp-body {
+        display: block;
+        padding-top: 24px;
+      }
+      .pp-desc-col,
+      .pp-credits-col {
+        width: 100%;
+        padding: 0;
+        margin: 0 0 32px 0;
+      }
+      #idx-footer { display: none !important; }
+      .pp-desc-col { padding-bottom: 32px; }
+      .pp-credits-col { padding-bottom: 80px; }
+      #bottom-bar { display: flex !important; bottom: calc(40px + env(safe-area-inset-bottom)) !important; }
+      /* Cancel site.css mobile pseudo-content so our injected text shows */
+      #bottom-bar .bb-c::before { content: none !important; }
+      #bottom-bar .bb-c .bb-c-desktop { display: inline !important; }
+      #bottom-bar .bb-r::before { content: none !important; }
+      #bottom-bar a {
+        color: inherit;
+        text-decoration: none;
+        pointer-events: auto;
+        transition: color .12s;
+      }
+      #bottom-bar a:hover { color: rgba(255,255,255,0.9); }
+    }
+  </style>
+</head>
+<body class="page-project">
+
+  <!-- Background point cloud + frosted glass -->
+  <div id="pointcloud-bg"></div>
+  <div id="pointcloud-glass"></div>
+
+  <!-- Global nav -->
+  <div id="nav-mount"></div>
+
+  <!-- Page content -->
+  <div id="page-project">
+    <div class="pp-wrap">
+
+      <!-- ===== HERO VIDEO ===== -->
+      <div class="pp-hero">
+        <div class="pp-iframe-wrap">
+          <iframe id="pp-vimeo"
+            src="https://player.vimeo.com/video/893805804?h=944970a57e&background=0&autopause=0&controls=0&playsinline=1"
+            frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="pp-controls">
+          <div class="pp-ctrl-left">
+            <button class="pp-ctrl-btn" id="pp-play-pause">
+              <svg id="pp-icon-play" width="10" height="12" viewBox="0 0 10 12" fill="none"><polygon points="0,0 10,6 0,12" fill="rgba(255,255,255,0.8)"/></svg>
+              <svg id="pp-icon-pause" width="10" height="12" viewBox="0 0 10 12" fill="none" style="display:none;"><rect x="0" y="0" width="3.5" height="12" fill="rgba(255,255,255,0.8)"/><rect x="6.5" y="0" width="3.5" height="12" fill="rgba(255,255,255,0.8)"/></svg>
+            </button>
+            <div class="pp-time" id="pp-time">0:00 / 0:00</div>
+          </div>
+          <div class="pp-ctrl-right">
+            <button class="pp-ctrl-btn" id="pp-mute">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <polygon points="0,3.5 3.5,3.5 7,0 7,12 3.5,8.5 0,8.5" fill="rgba(255,255,255,0.8)"/>
+                <line id="pp-mute-line" x1="9" y1="3" x2="12" y2="9" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" style="display:none;"/>
+                <path id="pp-vol-arc" d="M9,2 Q12,6 9,10" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" fill="none"/>
+              </svg>
+            </button>
+            <button class="pp-ctrl-btn" id="pp-fullscreen">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <polyline points="0,4 0,0 4,0" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" fill="none"/>
+                <polyline points="8,0 12,0 12,4" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" fill="none"/>
+                <polyline points="0,8 0,12 4,12" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" fill="none"/>
+                <polyline points="12,8 12,12 8,12" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" fill="none"/>
+              </svg>
+            </button>
+          </div>
+          <div class="pp-progress-wrap" id="pp-progress-wrap">
+            <div class="pp-progress-bg"><div class="pp-progress-fill" id="pp-progress-fill"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== INFO ROW (mirrors home-page project-table row) ===== -->
+      <div class="pp-info-row">
+        <div>Usal Project &times; REI</div>
+        <div>Ode to Nature</div>
+        <div>CALIFORNIA, USA</div>
+        <div>36.7783&deg; N&nbsp;&nbsp;119.4179&deg; W</div>
+        <div>Alexa LF &mdash; Leica R</div>
+      </div>
+
+      <!-- ===== BODY: GALLERY + CREDITS ===== -->
+      <div class="pp-body">
+
+        <!-- LEFT: Gallery -->
+        <div class="pp-desc-col">
+          <div class="pp-gallery">
+            <div class="pp-gallery-grid">
+
+              <div class="pp-gimg">
+                <img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/USAL/usal1.gif" alt="Usal Project — Ode to Nature, image 01" loading="lazy">
+              </div>
+              <div class="pp-gimg">
+                <img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/USAL/usal2.gif" alt="Usal Project — Ode to Nature, image 02" loading="lazy">
+              </div>
+              <div class="pp-gimg">
+                <img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/USAL/usal4.png" alt="Usal Project — Ode to Nature, image 03" loading="lazy">
+              </div>
+              <div class="pp-gimg">
+                <img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/USAL/usal3.gif" alt="Usal Project — Ode to Nature, image 04" loading="lazy">
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Credits -->
+        <div class="pp-credits-col">
+
+          <span class="pp-credits-title">Credits</span>
+
+          <div class="pp-credit-row"><span class="pp-credit-role">Talent</span><span class="pp-credit-name">Hyungi Park, Rio Lakeshore, Rikki Ponce, Dylan McCoy, Niki Sepanj</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Production Company</span><span class="pp-credit-name">Field Unit</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Director</span><span class="pp-credit-name">Parker Schmidt</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Director of Photography</span><span class="pp-credit-name">Alex Fauver</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Photographer</span><span class="pp-credit-name">Ben Slevin</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">1st AC</span><span class="pp-credit-name">Blaize Fobbe</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Executive Producers</span><span class="pp-credit-name">Oscar Lyons, Alec Ernest</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Snr Producer</span><span class="pp-credit-name">Danny Owens</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Line Producer</span><span class="pp-credit-name">Rob Giani</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Production Assistant</span><span class="pp-credit-name">David Arzac</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Graphics</span><span class="pp-credit-name">Suah Cho</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Colorist</span><span class="pp-credit-name">Ruth Wardell</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Color Producer</span><span class="pp-credit-name">Dan Kreeger</span></div>
+          <div class="pp-credit-row"><span class="pp-credit-role">Color Studio</span><span class="pp-credit-name">Time-Based Arts</span></div>
+
+        </div>
+      </div>
+
+      <!-- ===== FOOTER (same as works/bio) ===== -->
+      <div id="idx-footer">
+        <div class="foot-col">
+          <div class="foot-eyebrow">Representation</div>
+          <div class="foot-rep">
+            <a class="foot-rep-row" href="mailto:charlotte@canadacanada.com"><span>United States</span><span>Canada</span></a>
+            <a class="foot-rep-row" href="mailto:jencrabb@thesweetshop.tv"><span>Asia</span><span>Sweetshop</span></a>
+            <a class="foot-rep-row" href="mailto:daniel@tarotpictures.se"><span>Scandinavia</span><span>Tarot</span></a>
+            <a class="foot-rep-row" href="mailto:cam@prodbydenim.com"><span>Canada</span><span>Denim</span></a>
+            <a class="foot-rep-row" href="mailto:Harrison@mojave.productions"><span>Australia</span><span>Mojave</span></a>
+            <a class="foot-rep-row" href="mailto:peter@hovnfilms.com"><span>Austria</span><span>Hovn</span></a>
+            <a class="foot-rep-row" href="mailto:scott@equalsmgmt.com"><span>Intl</span><span>Equals Mgmt</span></a>
+            <a class="foot-rep-row" href="https://houseofspoils.com/collections/all-prints/artist-parker-schmidt" target="_blank" rel="noopener"><span>Gallery</span><span>House of Spoils</span></a>
+          </div>
+        </div>
+
+        <div class="foot-col">
+          <div class="foot-eyebrow">Contact</div>
+          <div class="foot-stack">
+            <a href="mailto:parker@bonusrun.com">parker@bonusrun.com</a>
+            <a href="https://www.instagram.com/parker.schmidt/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://vimeo.com/schmidtparker" target="_blank" rel="noopener">Vimeo</a>
+          </div>
+          <div class="foot-address">
+            Los Angeles, CA<br>United States
+          </div>
+        </div>
+
+        <div class="foot-col">
+          <div class="foot-eyebrow">Press</div>
+          <div class="foot-stack">
+            <a href="https://lbbonline.com/news/florence-adds-director-parker-schmidt" target="_blank" rel="noopener">Little Black Book</a>
+            <a href="https://www.c41magazine.com/the-moving-image-in-conversation-with/" target="_blank" rel="noopener">C41 Magazine</a>
+            <a href="https://theproduced.substack.com/p/shaping-the-bowl-of-life-with-parker" target="_blank" rel="noopener">The Produced</a>
+            <a href="https://www.nowness.com/picks/bowl-of-life" target="_blank" rel="noopener">Nowness</a>
+            <a href="https://www.instagram.com/p/C9SiFoCsAzA/?img_index=1" target="_blank" rel="noopener">Vision Cine</a>
+          </div>
+        </div>
+
+        <div class="foot-col">
+          <div class="foot-eyebrow">Legal</div>
+          <div class="foot-legal">
+            Website by CANIS 44 LTD<br>
+            Registered in England 2026<br>
+            Company No. 17128354<br>
+            <a href="https://www.canis44.com" target="_blank" rel="noopener">www.canis44.com</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom bar mount (mobile only) -->
+  <div id="bottom-bar-mount"></div>
+
+  <!-- Scripts -->
+  <script src="../assets/js/nav.js"></script>
+  <script src="../assets/js/bottom-bar.js"></script>
+  <script>
+    // Project page: override bottom-bar content for mobile.
+    (function () {
+      var bar = document.getElementById('bottom-bar');
+      if (!bar) return;
+      var left   = bar.querySelector('.bb-l');
+      var center = bar.querySelector('.bb-c');
+      var right  = bar.querySelector('.bb-r');
+      if (left)   left.innerHTML   = '<a href="../legal.html">LEGAL INFORMATION</a>';
+      if (center) center.innerHTML = '<a href="https://www.canis44.com" target="_blank" rel="noopener">WEBSITE BY CANIS44.COM</a>';
+      if (right)  right.innerHTML  = '<a href="../index.html">PARKER SCHMIDT</a>';
+    })();
+
+    // Position the vertical divider to span from the top of pp-body to the start of the footer.
+    // (divider removed — block intentionally left as a no-op stub for future use)
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>window.POINTCLOUD_MODE = 'background';</script>
+  <script src="../assets/js/pointcloud.js"></script>
+  <script src="../assets/js/project.js"></script>
+</body>
+</html>

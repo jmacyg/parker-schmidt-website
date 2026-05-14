@@ -1,0 +1,16 @@
+{
+  "_note": "Each artefact has TWO files: <slug>.pos.b64 (Float32 positions, 3 per vertex) and <slug>.col.b64 (Uint8 colors, 3 per vertex). All clouds have 40,000 points.",
+  "artefacts": [
+    { "canvasId": "angel-canvas", "slug": "angel"       },
+    { "canvasId": "knife-canvas", "slug": "knife"       },
+    { "canvasId": "sun-canvas",   "slug": "sun"         },
+    { "canvasId": "wolf-canvas",  "slug": "wolf"        },
+    { "canvasId": "artefact-14",  "slug": "artefact-14" },
+    { "canvasId": "artefact-15",  "slug": "artefact-15" },
+    { "canvasId": "artefact-19",  "slug": "artefact-19" },
+    { "canvasId": "artefact-22",  "slug": "artefact-22" },
+    { "canvasId": "artefact-25",  "slug": "artefact-25" },
+    { "canvasId": "artefact-28",  "slug": "artefact-28" },
+    { "canvasId": "artefact-30",  "slug": "artefact-30" }
+  ]
+}

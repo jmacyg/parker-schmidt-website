@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Core pages -->
+  <url>
+    <loc>https://parkerinfocus.com/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://parkerinfocus.com/works.html</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://parkerinfocus.com/bio.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Project pages -->
+  <url><loc>https://parkerinfocus.com/projects/aero.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/ascension.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/bolt.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/bowloflife.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/cadillac.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/chimi.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/corona.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/dodge.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/exeed.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/kia.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/leica.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/lexus.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/lightfield.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/lululemon.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/nike.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/requiem.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/srixon-obsessed.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/srixon-theironstandard.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/usal.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/willett.html</loc><priority>0.7</priority></url>
+  <url><loc>https://parkerinfocus.com/projects/wsg.html</loc><priority>0.7</priority></url>
+
+</urlset>

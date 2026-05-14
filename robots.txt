@@ -1,0 +1,7 @@
+# robots.txt — Parker Schmidt
+# Allow all crawlers full access; point them at the sitemap.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://parkerinfocus.com/sitemap.xml

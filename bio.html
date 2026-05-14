@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bio — Parker Schmidt</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <!-- ===== SEO / social meta =====================================
+       Bio page. og:image is a PLACEHOLDER — swap the path once a
+       real share image exists (recommended 1200×630).
+       ============================================================= -->
+  <meta name="description" content="Director Parker Schmidt — from the U.S., based in Los Angeles. Representation, awards and press for a filmmaker elevating the everyday through intimate narrative and impressionist imagery." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://parkerinfocus.com/bio.html" />
+
+  <meta property="og:type" content="profile" />
+  <meta property="og:site_name" content="Parker Schmidt" />
+  <meta property="og:title" content="Bio — Parker Schmidt" />
+  <meta property="og:description" content="Director Parker Schmidt — from the U.S., based in Los Angeles. Representation, awards and press for a filmmaker elevating the everyday through intimate narrative and impressionist imagery." />
+  <meta property="og:url" content="https://parkerinfocus.com/bio.html" />
+  <meta property="og:image" content="https://parkerinfocus.com/assets/img/og-share.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Bio — Parker Schmidt" />
+  <meta name="twitter:description" content="Director Parker Schmidt — from the U.S., based in Los Angeles. Representation, awards and press for a filmmaker elevating the everyday through intimate narrative and impressionist imagery." />
+  <meta name="twitter:image" content="https://parkerinfocus.com/assets/img/og-share.jpg" />
+
+  <!-- Structured data: Person. Helps search engines and AI crawlers
+       understand who this site is about. sameAs links the entity to
+       its verified social profiles. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Parker Schmidt",
+    "jobTitle": "Director",
+    "url": "https://parkerinfocus.com/",
+    "description": "Film director crafting cinematic creative and advertising films — elevating the everyday through intimate narrative and impressionist imagery. From the U.S., based in Los Angeles.",
+    "homeLocation": {
+      "@type": "Place",
+      "name": "Los Angeles, California, United States"
+    },
+    "email": "parker@bonusrun.com",
+    "sameAs": [
+      "https://www.instagram.com/parker.schmidt/",
+      "https://vimeo.com/schmidtparker"
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <style>
+    /* ===== Page wrapper (matches works.html grid spacing) ===== */
+    #bio-grid-wrap {
+      padding: 80px 20px 0;
+    }
+
+    .bio-eyebrow {
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      margin: 0 0 24px;
+    }
+
+    /* ===== Section 1 — Original intro layout: portrait+contact (left) | representation (right) ===== */
+    #bio-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 48px;
+      align-items: stretch;
+      padding-bottom: 96px;
+    }
+    .bio-intro-left {
+      display: grid;
+      grid-template-columns: 280px auto;
+      column-gap: 24px;
+      align-items: start;
+      row-gap: 24px;
+      min-height: 360px;
+    }
+    .bio-intro-right {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .bio-profile-section {
+      /* Push to the bottom of the right column. Because the intro grid
+         uses align-items: stretch and the left column is anchored at
+         360px by the photo, the right column matches that height — so
+         the section's bottom divider lands flush with the photo bottom
+         regardless of how many lines the text wraps to. */
+      margin-top: auto;
+    }
+    .bio-profile-section .tile-grid {
+      margin-bottom: 0;
+    }
+    .bio-profile-section .tile {
+      grid-template-columns: 60px 1fr;
+    }
+    .bio-profile-section .tile .tile-sub { display: none; }
+    .bio-portrait {
+      width: 280px;
+      height: 360px;
+      object-fit: cover;
+      display: block;
+    }
+    .bio-paragraph {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      line-height: 1.5;
+      letter-spacing: .03em;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      margin: 0;
+    }
+    .bio-cell-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .bio-cell-stack a {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .04em;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color .12s;
+    }
+    .bio-cell-stack a:hover { color: rgba(255,255,255,0.95); }
+    .bio-cell-address {
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      letter-spacing: .14em;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.22);
+      text-transform: uppercase;
+      margin-top: 24px;
+    }
+
+    .bio-rep { display: flex; flex-direction: column; gap: 6px; }
+    .bio-rep-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: .5px solid rgba(255,255,255,0.08);
+      text-decoration: none;
+      padding: 0 8px;
+      margin: 0 -8px;
+      transition: background .12s;
+    }
+    .bio-rep-row:hover { background: rgba(255,255,255,0.03); }
+    .bio-rep-row span {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .04em;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.55);
+      text-transform: uppercase;
+      transition: color .12s;
+    }
+    .bio-rep-row:hover span { color: rgba(255,255,255,0.95); }
+
+    /* Mobile-only contact rows — hidden at desktop widths so the
+       original cell-stack + address layout stays untouched. The mobile
+       media query below flips this and hides the cell-stack instead. */
+    .bio-contact-rows { display: none; }
+
+    /* ===== Tile sections (Awards, Press) — row layout with dividers ===== */
+    .tile-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 100px;
+      border-top: .5px solid rgba(255,255,255,0.08);
+    }
+    .tile {
+      display: grid;
+      /* Column 3 (the right-hand "sub" value) starts at exactly the
+         same x-position as the Representation column above it. The
+         intro grid is two 1fr columns with a 48px gap, so the right
+         column begins at 50% + 24px. Setting col 3's width to
+         calc(50% - 24px) makes it occupy from that point to the right
+         edge — perfectly aligned with Representation. */
+      grid-template-columns: 60px 1fr calc(50% - 24px);
+      column-gap: 24px;
+      align-items: baseline;
+      position: relative;
+      padding: 14px 8px;
+      margin: 0 -8px;
+      border-bottom: .5px solid rgba(255,255,255,0.08);
+      cursor: default;
+      transition: background .12s;
+    }
+    .tile[href] { cursor: pointer; text-decoration: none; }
+    a.tile:hover { background: rgba(255,255,255,0.03); }
+    .tile .tile-num {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .08em;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+    }
+    .tile .tile-label {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .04em;
+      color: rgba(255,255,255,0.75);
+      text-transform: uppercase;
+      line-height: 1.5;
+    }
+    .tile .tile-sub {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .04em;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+      line-height: 1.5;
+    }
+    a.tile:hover .tile-num   { color: rgba(255,255,255,0.85); }
+    a.tile:hover .tile-label { color: #fff; }
+    a.tile:hover .tile-sub   { color: rgba(255,255,255,0.75); }
+
+    /* Hover corner brackets — clickable tiles only */
+    .tile .bracket {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .tile .br-tl { top: -6px;    left: -6px;  border-top: 1px solid #fff;    border-left: 1px solid #fff; }
+    .tile .br-tr { top: -6px;    right: -6px; border-top: 1px solid #fff;    border-right: 1px solid #fff; }
+    .tile .br-bl { bottom: -6px; left: -6px;  border-bottom: 1px solid #fff; border-left: 1px solid #fff; }
+    .tile .br-br { bottom: -6px; right: -6px; border-bottom: 1px solid #fff; border-right: 1px solid #fff; }
+    a.tile:hover .bracket {
+      opacity: 1;
+      animation: bracket-pulse 2.4s ease-in-out infinite;
+    }
+    a.tile .br-tr { animation-delay: 0.15s; }
+    a.tile .br-bl { animation-delay: 0.30s; }
+    a.tile .br-br { animation-delay: 0.45s; }
+
+    /* ===== Footer (unchanged from works.html) ===== */
+    #idx-footer {
+      display: grid;
+      /* All four columns equal width, sized so the boundary between
+         col 2 and col 3 falls at exactly 50% of the row, with col 3
+         beginning at 50% + 24px (after the column-gap). This aligns
+         col 3 (PRESS) directly under the Press values column from the
+         awards/press grid above, which also starts at 50% + 24px. */
+      grid-template-columns: repeat(4, calc(25% - 12px));
+      gap: 0;
+      padding: 24px 0 48px;
+      margin: 58px 0 0;
+      border-top: .5px solid rgba(255,255,255,0.08);
+      column-gap: 24px;
+    }
+    #idx-footer > * { padding-right: 32px; }
+    #idx-footer > *:last-child { padding-right: 0; }
+    #idx-footer .foot-eyebrow {
+      font-size: 8px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      margin-bottom: 18px;
+    }
+    #idx-footer .foot-stack { display: flex; flex-direction: column; gap: 6px; }
+    #idx-footer .foot-stack a {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      line-height: 1.6;
+      transition: color .12s;
+    }
+    #idx-footer .foot-stack a:hover { color: rgba(255,255,255,0.95); }
+    #idx-footer .foot-address {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.32);
+      line-height: 1.7;
+      margin-top: 24px;
+    }
+    #idx-footer .foot-rep { display: flex; flex-direction: column; gap: 6px; }
+    #idx-footer .foot-rep-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      text-decoration: none;
+      padding: 0 8px;
+      margin: 0 -8px;
+      transition: background .12s;
+    }
+    #idx-footer .foot-rep-row:hover { background: rgba(255,255,255,0.03); }
+    #idx-footer .foot-rep-row span {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+      transition: color .12s;
+    }
+    #idx-footer .foot-rep-row:hover span { color: rgba(255,255,255,0.95); }
+    #idx-footer .foot-legal {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.32);
+      line-height: 1.85;
+    }
+    #idx-footer .foot-legal a {
+      color: inherit;
+      text-decoration: none;
+      transition: color .12s;
+    }
+    #idx-footer .foot-legal a:hover { color: rgba(255,255,255,0.95); }
+
+    #bottom-bar { display: none; }
+
+    /* ===== Responsive ===== */
+    /* At narrower widths the profile description wraps to 5+ lines and
+       would start overlapping the representation list above it. Stop
+       anchoring to the bottom and let the section flow normally — it
+       then expands downward past the photo instead of upward. */
+    @media (max-width: 950px) {
+      .bio-profile-section { margin-top: 32px; }
+      #bio-intro { align-items: start; }
+    }
+
+    @media (max-width: 768px) {
+      #bio-grid-wrap { padding: 140px 10px 0; }
+
+      /* ---- Mobile section spacing ----
+         Every visible section gap is 60px (Picture → Profile is the
+         exception — it's tighter so the profile reads as a portrait
+         caption). The script in this file reorders the DOM on mobile
+         only to:
+           Picture → Profile → Contact → Representation → Awards → Press
+         The selectors below cover every adjacent pair in that order. */
+      #bio-intro { display: block; padding-bottom: 0; }
+      .bio-intro-left { display: block; }
+      .bio-portrait { width: 100%; height: auto; aspect-ratio: 280 / 360; }
+
+      /* 1) Picture → Profile (Profile is moved into bio-intro-left by JS).
+         One text line of breathing room — the profile text reads as a
+         caption to the portrait above it. */
+      .bio-intro-left .bio-profile-section { margin-top: 10px; }
+      /* Hide the PROFILE eyebrow on mobile; the body text sits directly
+         under the portrait with no header. */
+      .bio-intro-left .bio-profile-section > .bio-eyebrow { display: none; }
+      /* 2) Profile → Contact (bio-text follows the moved Profile node) */
+      .bio-intro-left .bio-text { margin-top: 60px; }
+      /* 3) Contact → Representation (bio-intro-right contains Rep on mobile) */
+      .bio-intro-right { margin-top: 60px; margin-bottom: 60px; }
+      /* 4) Representation → Awards, 5) Awards → Press, 6) Press → (footer)
+         All driven by the .tile-grid bottom margin used across sections. */
+      .tile-grid { margin-bottom: 60px; }
+      .bio-profile-section .tile-grid { margin-bottom: 0; }
+      /* Strip any internal paragraph top-margin on profile so the gap
+         above it owns the whole space. */
+      .bio-text .bio-paragraph { max-width: 100%; margin-top: 0; }
+
+      /* Mobile-only contact list: swap the inline cell-stack + address
+         for two-column underlined rows that mirror the representation
+         block visually. Reuses bio-rep-row look so the two sections
+         feel consistent. */
+      .bio-intro-left .bio-cell-stack,
+      .bio-intro-left .bio-cell-address { display: none; }
+      .bio-contact-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 12px;
+      }
+      .bio-contact-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        border-bottom: .5px solid rgba(255,255,255,0.08);
+        text-decoration: none;
+        padding: 0 8px;
+        margin: 0 -8px;
+        transition: background .12s;
+      }
+      .bio-contact-row:hover { background: rgba(255,255,255,0.03); }
+      .bio-contact-row span {
+        font-family: 'Courier New', monospace;
+        font-size: 10px;
+        letter-spacing: .04em;
+        line-height: 1.6;
+        color: rgba(255,255,255,0.55);
+        text-transform: uppercase;
+        transition: color .12s;
+      }
+      .bio-contact-row:hover span { color: rgba(255,255,255,0.95); }
+
+      .tile {
+        grid-template-columns: 40px 1fr;
+        grid-template-rows: auto auto;
+        row-gap: 4px;
+        column-gap: 12px;
+        padding: 12px 6px;
+        margin: 0 -6px;
+      }
+      .tile .tile-num   { grid-column: 1; grid-row: 1 / span 2; }
+      .tile .tile-label { grid-column: 2; grid-row: 1; }
+      .tile .tile-sub   { grid-column: 2; grid-row: 2; }
+      /* Profile section uses its own 60px-num column on desktop. On
+         mobile we want its [B01] / body to align vertically with the
+         awards/press lists below, so match their 40px column. */
+      .bio-profile-section .tile {
+        grid-template-columns: 40px 1fr;
+      }
+      #idx-footer { display: none !important; }
+      #bottom-bar { display: flex; bottom: 20px; }
+    }
+  </style>
+</head>
+<body class="page-bio">
+
+  <!-- Background point cloud + frosted glass -->
+  <div id="pointcloud-bg"></div>
+  <div id="pointcloud-glass"></div>
+
+  <!-- Global nav -->
+  <div id="nav-mount"></div>
+
+  <!-- Page content -->
+  <div id="bio-grid-wrap">
+
+    <!-- ============= INTRO ============= -->
+    <div id="bio-intro">
+
+      <div class="bio-intro-left">
+        <img class="bio-portrait" src="assets/img/Parker_Schmidt.jpg" alt="Parker Schmidt" />
+        <div class="bio-text">
+          <div class="bio-eyebrow">Contact</div>
+          <!-- Desktop layout: stacked links + address line (hidden on mobile) -->
+          <div class="bio-cell-stack">
+            <a href="mailto:parker@bonusrun.com">parker@bonusrun.com</a>
+            <a href="https://www.instagram.com/parker.schmidt/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://vimeo.com/schmidtparker" target="_blank" rel="noopener">Vimeo</a>
+          </div>
+          <div class="bio-cell-address">Los Angeles, CA<br>United States</div>
+
+          <!-- Mobile layout: two-column rows matching the representation list
+               structure (label on the left, value on the right, underlined). -->
+          <div class="bio-contact-rows">
+            <a class="bio-contact-row" href="mailto:parker@bonusrun.com"><span>Email</span><span>parker@bonusrun.com</span></a>
+            <a class="bio-contact-row" href="https://www.instagram.com/parker.schmidt/" target="_blank" rel="noopener"><span>Instagram</span><span>parker.schmidt</span></a>
+            <a class="bio-contact-row" href="https://vimeo.com/schmidtparker" target="_blank" rel="noopener"><span>Vimeo</span><span>schmidtparker</span></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="bio-intro-right">
+        <div class="bio-eyebrow">Representation</div>
+        <div class="bio-rep">
+          <a class="bio-rep-row" href="mailto:charlotte@canadacanada.com"><span>United States</span><span>Canada</span></a>
+          <a class="bio-rep-row" href="mailto:jencrabb@thesweetshop.tv"><span>Asia</span><span>Sweetshop</span></a>
+          <a class="bio-rep-row" href="mailto:daniel@tarotpictures.se"><span>Scandinavia</span><span>Tarot</span></a>
+          <a class="bio-rep-row" href="mailto:cam@prodbydenim.com"><span>Canada</span><span>Denim</span></a>
+          <a class="bio-rep-row" href="mailto:Harrison@mojave.productions"><span>Australia</span><span>Mojave</span></a>
+          <a class="bio-rep-row" href="mailto:peter@hovnfilms.com"><span>Austria</span><span>Hovn</span></a>
+          <a class="bio-rep-row" href="mailto:scott@equalsmgmt.com"><span>Intl</span><span>Equals Mgmt</span></a>
+          <a class="bio-rep-row" href="https://houseofspoils.com/collections/all-prints/artist-parker-schmidt" target="_blank" rel="noopener"><span>Gallery</span><span>House of Spoils</span></a>
+        </div>
+        <div class="bio-profile-section">
+          <div class="bio-eyebrow">Profile</div>
+          <div class="tile-grid">
+            <div class="tile"><div class="tile-num">[B01]</div><div class="tile-label">FROM THE U.S. COMPETED PROFESSIONALLY IN DOWNHILL SKATEBOARDING. STUDIED IN BERLIN. BASED IN LOS ANGELES. APPROACHING CREATIVE AND ADVERTISING FILMS BY ELEVATING THE EVERY DAY TO A HIGHER PLANE THROUGH INTIMATE NARRATIVES AND IMPRESSIONIST IMAGERY. FREQUENT CERAMICIST, SURFER, CYCLIST, BAKER.</div><div class="tile-sub"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============= AWARDS ============= -->
+    <div class="bio-eyebrow">Awards</div>
+    <div class="tile-grid">
+      <div class="tile"><div class="tile-num">[A01]</div><div class="tile-label">ADC One Club Winner</div><div class="tile-sub">Young Guns 23</div></div>
+      <div class="tile"><div class="tile-num">[A02]</div><div class="tile-label">CM-G1 — Willett</div><div class="tile-sub">Vimeo Staff Pick 2025</div></div>
+      <div class="tile"><div class="tile-num">[A03]</div><div class="tile-label">Next Generation Award — Shortlist</div><div class="tile-sub">Berlin Commercial 2025</div></div>
+      <div class="tile"><div class="tile-num">[A04]</div><div class="tile-label">Experimental, Bowl of Life — Shortlist</div><div class="tile-sub">Berlin Commercial 2025</div></div>
+      <div class="tile"><div class="tile-num">[A05]</div><div class="tile-label">New Director of the Year — Nominee</div><div class="tile-sub">Shots Americas Award 2025</div></div>
+      <div class="tile"><div class="tile-num">[A06]</div><div class="tile-label">Best Emerging Filmmaker — Winner</div><div class="tile-sub">One Club One Screen 2024</div></div>
+      <div class="tile"><div class="tile-num">[A07]</div><div class="tile-label">Best Experimental Film — Winner</div><div class="tile-sub">One Club One Screen 2024</div></div>
+      <div class="tile"><div class="tile-num">[A08]</div><div class="tile-label">Passion Project — Shortlist</div><div class="tile-sub">Young Director Award 2024</div></div>
+      <div class="tile"><div class="tile-num">[A09]</div><div class="tile-label">Motion/Film Craft, Passion Project — Bronze Cube</div><div class="tile-sub">ADC Awards 2024</div></div>
+      <div class="tile"><div class="tile-num">[A10]</div><div class="tile-label">Bowl of Life</div><div class="tile-sub">NOWNESS Picks</div></div>
+      <div class="tile"><div class="tile-num">[A11]</div><div class="tile-label">Passion Project, Best Cinematography — Shortlist</div><div class="tile-sub">Berlin Commercial 2024</div></div>
+      <div class="tile"><div class="tile-num">[A12]</div><div class="tile-label">Passion Project, Best Direction — Official Selection</div><div class="tile-sub">Berlin Commercial 2024</div></div>
+      <div class="tile"><div class="tile-num">[A13]</div><div class="tile-label">Best Sport Film</div><div class="tile-sub">Santa Monica International Film Awards</div></div>
+      <div class="tile"><div class="tile-num">[A14]</div><div class="tile-label">Best Skateboard Film</div><div class="tile-sub">Mountain &amp; Adventure Film Festival</div></div>
+      <div class="tile"><div class="tile-num">[A15]</div><div class="tile-label">Official Selection</div><div class="tile-sub">Tokyo Shorts</div></div>
+      <div class="tile"><div class="tile-num">[A16]</div><div class="tile-label">Official Selection</div><div class="tile-sub">Brussels International Film Festival</div></div>
+      <div class="tile"><div class="tile-num">[A17]</div><div class="tile-label">Official Selection</div><div class="tile-sub">Portuguese Surf Film Festival</div></div>
+      <div class="tile"><div class="tile-num">[A18]</div><div class="tile-label">Official Selection</div><div class="tile-sub">Sport Film Festival Rotterdam</div></div>
+      <div class="tile"><div class="tile-num">[A19]</div><div class="tile-label">Official Selection</div><div class="tile-sub">Los Angeles Cinematography Awards</div></div>
+    </div>
+
+    <!-- ============= PRESS ============= -->
+    <div class="bio-eyebrow">Press</div>
+    <div class="tile-grid">
+      <a class="tile" href="https://www.oneclub.org/articles/-view/young-guns-23-parker-schmidt/" target="_blank" rel="noopener"><div class="tile-num">[P01]</div><div class="tile-label">Parker Schmidt Interview</div><div class="tile-sub">ADC Young Guns 23</div></a>
+      <a class="tile" href="https://theproduced.substack.com/p/shaping-the-bowl-of-life-with-parker" target="_blank" rel="noopener"><div class="tile-num">[P02]</div><div class="tile-label">Reel Talk: Parker Schmidt</div><div class="tile-sub">The Produced</div></a>
+      <a class="tile" href="https://www.lbbonline.com/news/the-sweetshop-welcomes-director-parker-schmidt-to-their-asia-roster" target="_blank" rel="noopener"><div class="tile-num">[P03]</div><div class="tile-label">The Sweetshop adds Parker Schmidt to their Asia roster</div><div class="tile-sub">Little Black Book</div></a>
+      <a class="tile" href="https://lbbonline.com/news/florence-adds-director-parker-schmidt" target="_blank" rel="noopener"><div class="tile-num">[P04]</div><div class="tile-label">Florence Adds Parker Schmidt</div><div class="tile-sub">Little Black Book</div></a>
+      <a class="tile" href="https://www.c41magazine.com/the-moving-image-in-conversation-with/" target="_blank" rel="noopener"><div class="tile-num">[P05]</div><div class="tile-label">The Moving Image: In Conversation with Parker Schmidt</div><div class="tile-sub">C41 Magazine</div></a>
+      <a class="tile" href="https://lbbonline.com/news/untold-fable-produces-the-first-of-a-decade-nike-content-series-with-victor-wembanyama" target="_blank" rel="noopener"><div class="tile-num">[P06]</div><div class="tile-label">Untold Fable Produces the First-of-a-Decade Nike Content Series with Victor Wembanyama</div><div class="tile-sub">Little Black Book</div></a>
+      <a class="tile" href="https://www.nowness.com/picks/bowl-of-life" target="_blank" rel="noopener"><div class="tile-num">[P07]</div><div class="tile-label">Bowl of Life Premiere</div><div class="tile-sub">NOWNESS</div></a>
+      <a class="tile" href="https://www.instagram.com/p/C9SiFoCsAzA/?img_index=1" target="_blank" rel="noopener"><div class="tile-num">[P08]</div><div class="tile-label">X Interview</div><div class="tile-sub">Vision Cine</div></a>
+      <a class="tile" href="https://www.curationhour.com/featured/bowl-of-life" target="_blank" rel="noopener"><div class="tile-num">[P09]</div><div class="tile-label">Bowl of Life — The Art and Lifecycle of Dishware</div><div class="tile-sub">Curation Hour</div></a>
+      <a class="tile" href="https://www.lbbonline.com/news/field-unit-crafts-an-ode-to-outdoor-adventure-for-usal-project" target="_blank" rel="noopener"><div class="tile-num">[P10]</div><div class="tile-label">Field Unit Crafts an Ode to Outdoor Adventure for USAL Project</div><div class="tile-sub">Little Black Book</div></a>
+      <a class="tile" href="https://www.lbbonline.com/news/the-directors-parker-schmidt" target="_blank" rel="noopener"><div class="tile-num">[P11]</div><div class="tile-label">The Directors: Parker Schmidt</div><div class="tile-sub">Little Black Book</div></a>
+      <a class="tile" href="https://www.shots.net/news/view/parker-schmidt-delivers-ascension" target="_blank" rel="noopener"><div class="tile-num">[P12]</div><div class="tile-label">Parker Schmidt Delivers 'Ascension'</div><div class="tile-sub">Shots</div></a>
+      <a class="tile" href="https://www.lbbonline.com/news/moirai-director-parker-schmidt-releases-short-documentary-ascension-featuring-emi-matushsima" target="_blank" rel="noopener"><div class="tile-num">[P13]</div><div class="tile-label">Moirai Director Parker Schmidt Releases Short Documentary 'Ascension' Featuring Emi Matushsima</div><div class="tile-sub">Little Black Book</div></a>
+      <a class="tile" href="https://leica-camera.com/en-int/stories/parker-schmidt-sl2-s-creative-cornerstone" target="_blank" rel="noopener"><div class="tile-num">[P14]</div><div class="tile-label">SL2: Creative Cornerstone</div><div class="tile-sub">Leica Camera</div></a>
+    </div>
+
+    <!-- ============= FOOTER (unchanged) ============= -->
+    <div id="idx-footer">
+      <div class="foot-col">
+        <div class="foot-eyebrow">Representation</div>
+        <div class="foot-rep">
+          <a class="foot-rep-row" href="mailto:charlotte@canadacanada.com"><span>United States</span><span>Canada</span></a>
+          <a class="foot-rep-row" href="mailto:jencrabb@thesweetshop.tv"><span>Asia</span><span>Sweetshop</span></a>
+          <a class="foot-rep-row" href="mailto:daniel@tarotpictures.se"><span>Scandinavia</span><span>Tarot</span></a>
+          <a class="foot-rep-row" href="mailto:cam@prodbydenim.com"><span>Canada</span><span>Denim</span></a>
+          <a class="foot-rep-row" href="mailto:Harrison@mojave.productions"><span>Australia</span><span>Mojave</span></a>
+          <a class="foot-rep-row" href="mailto:peter@hovnfilms.com"><span>Austria</span><span>Hovn</span></a>
+          <a class="foot-rep-row" href="mailto:scott@equalsmgmt.com"><span>Intl</span><span>Equals Mgmt</span></a>
+          <a class="foot-rep-row" href="https://houseofspoils.com/collections/all-prints/artist-parker-schmidt" target="_blank" rel="noopener"><span>Gallery</span><span>House of Spoils</span></a>
+        </div>
+      </div>
+
+      <div class="foot-col">
+        <div class="foot-eyebrow">Contact</div>
+        <div class="foot-stack">
+          <a href="mailto:parker@bonusrun.com">parker@bonusrun.com</a>
+          <a href="https://www.instagram.com/parker.schmidt/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://vimeo.com/schmidtparker" target="_blank" rel="noopener">Vimeo</a>
+        </div>
+        <div class="foot-address">
+          Los Angeles, CA<br>United States
+        </div>
+      </div>
+
+      <div class="foot-col">
+        <div class="foot-eyebrow">Press</div>
+        <div class="foot-stack">
+          <a href="https://lbbonline.com/news/florence-adds-director-parker-schmidt" target="_blank" rel="noopener">Little Black Book</a>
+          <a href="https://www.c41magazine.com/the-moving-image-in-conversation-with/" target="_blank" rel="noopener">C41 Magazine</a>
+          <a href="https://theproduced.substack.com/p/shaping-the-bowl-of-life-with-parker" target="_blank" rel="noopener">The Produced</a>
+          <a href="https://www.nowness.com/picks/bowl-of-life" target="_blank" rel="noopener">Nowness</a>
+          <a href="https://www.instagram.com/p/C9SiFoCsAzA/?img_index=1" target="_blank" rel="noopener">Vision Cine</a>
+        </div>
+      </div>
+
+      <div class="foot-col">
+        <div class="foot-eyebrow">Legal</div>
+        <div class="foot-legal">
+          Website by CANIS 44 LTD<br>
+          Registered in England 2026<br>
+          Company No. 17128354<br>
+          <a href="https://www.canis44.com" target="_blank" rel="noopener">www.canis44.com</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom bar mount (shown on mobile only) -->
+  <div id="bottom-bar-mount"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/nav.js"></script>
+  <script src="assets/js/bottom-bar.js"></script>
+  <script>
+    // Inject corner brackets into clickable tiles only
+    document.querySelectorAll('a.tile').forEach(function (el) {
+      el.insertAdjacentHTML('beforeend',
+        '<span class="bracket br-tl"></span>' +
+        '<span class="bracket br-tr"></span>' +
+        '<span class="bracket br-bl"></span>' +
+        '<span class="bracket br-br"></span>'
+      );
+    });
+
+    // Mobile-only section reorder. Desktop layout (the two-column intro)
+    // stays exactly as authored; on viewports ≤ 768px we want the visual
+    // stacking order to be Picture → Profile → Contact → Representation
+    // → Awards → Press. To achieve that, move the Profile section node
+    // from bio-intro-right into bio-intro-left, placing it between the
+    // portrait and the bio-text (Contact) block.
+    //
+    // Reactive across the breakpoint: if the viewport crosses 768px in
+    // either direction (resize, devtools toggle, rotate), we put Profile
+    // back where it belongs. We remember the original parent + next
+    // sibling so we can restore exactly.
+    (function () {
+      var profile = document.querySelector('.bio-profile-section');
+      if (!profile) return;
+      var originalParent  = profile.parentNode;
+      var originalNext    = profile.nextSibling; // may be null
+      var introLeft       = document.querySelector('.bio-intro-left');
+      var bioText         = introLeft ? introLeft.querySelector('.bio-text') : null;
+      if (!introLeft || !bioText) return;
+
+      var mql = window.matchMedia('(max-width: 768px)');
+      function apply() {
+        if (mql.matches) {
+          // Mobile: profile goes before bio-text inside bio-intro-left.
+          if (profile.parentNode !== introLeft || profile.nextSibling !== bioText) {
+            introLeft.insertBefore(profile, bioText);
+          }
+        } else {
+          // Desktop: restore to original position.
+          if (profile.parentNode !== originalParent) {
+            originalParent.insertBefore(profile, originalNext);
+          }
+        }
+      }
+      apply();
+      // Older Safari uses addListener; modern uses addEventListener.
+      if (mql.addEventListener) mql.addEventListener('change', apply);
+      else if (mql.addListener) mql.addListener(apply);
+    })();
+
+    // Bio-page override: on desktop, show IDAHO/time; on mobile, show
+    // the three-link slate that matches the project pages.
+    (function () {
+      var bar = document.getElementById('bottom-bar');
+      if (!bar) return;
+      var left   = bar.querySelector('.bb-l');
+      var center = bar.querySelector('.bb-c');
+      var right  = bar.querySelector('.bb-r');
+
+      if (window.innerWidth <= 768) {
+        // Mobile: three-link layout — matches the project pages.
+        if (left)   left.innerHTML   = '<a href="legal.html">LEGAL INFORMATION</a>';
+        if (center) center.innerHTML = '<a href="https://www.canis44.com" target="_blank" rel="noopener">WEBSITE BY CANIS44.COM</a>';
+        if (right)  right.innerHTML  = '<a href="index.html">PARKER SCHMIDT</a>';
+        return;
+      }
+
+      // Desktop: original IDAHO + live time.
+      if (left)  left.textContent = 'IDAHO, USA';
+      if (right) {
+        right.innerHTML = '<span id="bio-idaho-time">--:--:--</span>';
+        var el = document.getElementById('bio-idaho-time');
+        function tick() {
+          var fmt = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'America/Boise', hour12: false,
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+          });
+          el.textContent = fmt.format(new Date());
+        }
+        tick();
+        setInterval(tick, 1000);
+      }
+    })();
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>window.POINTCLOUD_MODE = 'background';</script>
+  <script src="assets/js/pointcloud.js"></script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Parker Schmidt — Selected Works</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <!-- ===== SEO / social meta ===================================
+       Home page meta. og:url and canonical use the live domain
+       https://parkerinfocus.com/. The og:image path below is a
+       PLACEHOLDER — swap assets/img/og-share.jpg for the real
+       share-image path once it's added (recommended 1200×630).
+       ============================================================ -->
+  <meta name="description" content="Parker Schmidt is a director crafting cinematic creative and advertising films — elevating the everyday through intimate narrative and impressionist imagery." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://parkerinfocus.com/" />
+
+  <!-- Open Graph (Facebook, LinkedIn, iMessage, etc.) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Parker Schmidt" />
+  <meta property="og:title" content="Parker Schmidt — Selected Works" />
+  <meta property="og:description" content="Parker Schmidt is a director crafting cinematic creative and advertising films — elevating the everyday through intimate narrative and impressionist imagery." />
+  <meta property="og:url" content="https://parkerinfocus.com/" />
+  <meta property="og:image" content="https://parkerinfocus.com/assets/img/og-share.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Parker Schmidt — Selected Works" />
+  <meta name="twitter:description" content="Parker Schmidt is a director crafting cinematic creative and advertising films — elevating the everyday through intimate narrative and impressionist imagery." />
+  <meta name="twitter:image" content="https://parkerinfocus.com/assets/img/og-share.jpg" />
+
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <style>
+    /* Tightened column widths: number / client / title / coordinates.
+       Column 3 (title) and column 4 (coordinates) pulled leftward to
+       close the previously wide horizontal gaps. The last column uses
+       max-content so it sizes to fit its text. The rows themselves are
+       inline-grid blocks whose widths would normally vary based on each
+       row's coordinate string length — to make every row's underline
+       match the longest row, we wrap the rows in an inline-block that
+       sizes to the widest row, then stretch each row to 100% of that. */
+    @media (min-width: 769px) {
+      #project-table {
+        display: inline-block; /* shrink-to-fit around widest row */
+      }
+      #project-table .work-row {
+        grid-template-columns: 70px 110px 200px max-content;
+        column-gap: 0;
+        width: 100%;        /* every row fills the widest row's width */
+        box-sizing: border-box;
+      }
+    }
+
+    /* Row underline: a single line that spans the row but stops at the
+       right edge of the last cell's text, rather than extending across
+       the rest of the screen. We disable any underline coming from
+       site.css on .work-row itself, then add our own via ::after that
+       covers only the row's content width (because the row is now
+       width: max-content). */
+    #project-table .work-row {
+      border-bottom: none !important;
+      position: relative;
+    }
+    #project-table .work-row::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: currentColor;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* Project number column: monospaced bracketed index matching the
+       works-page slate style ([001], [002], etc). Slightly dimmer than
+       the client column so the eye still lands on the brand name first. */
+    .wc-num {
+      font-variant-numeric: tabular-nums;
+      opacity: 0.65;
+      letter-spacing: 0.04em;
+    }
+
+    /* Coordinate display: inline on desktop, stacked on mobile (≤768px).
+       This prevents the second coordinate from awkwardly wrapping the unit
+       letter (N/E/W/S) onto a new line on narrow viewports.
+       Using flexbox here because text-align is being overridden by
+       site.css and even !important wasn't winning specificity. */
+    #project-table .work-row .wc-coord {
+      display: flex !important;
+      justify-content: flex-end !important;
+      align-items: center;
+      text-align: right !important;
+    }
+    .wc-coord .coord-lat,
+    .wc-coord .coord-lng { white-space: nowrap; }
+    .wc-coord .coord-lat { display: inline; }
+    .wc-coord .coord-lng { display: inline; }
+    .wc-coord .coord-sep { display: inline; }
+
+    @media (max-width: 768px) {
+      .wc-coord .coord-lat,
+      .wc-coord .coord-lng { display: block; }
+      .wc-coord { text-align: right; }
+
+      .wc-coord .coord-sep { display: inline; }
+
+      /* Reapportion the mobile grid: the title column (col 3) needs more
+         room so "OBSESSED WITH IT" and "VICTOR WEMBANYAMA" fit on one
+         line. Steal from col 1 ([001]) and col 2 (client) which both
+         have plenty of headroom. Col 4 (coords) keeps its width. */
+      #project-table .work-row {
+        grid-template-columns: 0.45fr 0.75fr 1.4fr 1fr !important;
+      }
+    }
+
+    /* =========================================================
+       Vignette: soft radial darkening at the canvas edges to
+       frame the point cloud and reduce the hard rectangular feel.
+       Non-interactive overlay, sits above the canvas but below UI.
+       ========================================================= */
+    #pc-vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(0,0,0,0) 55%,
+        rgba(0,0,0,0.25) 90%,
+        rgba(0,0,0,0.50) 100%
+      );
+    }
+
+    /* =========================================================
+       Idle preview tile: small, low-opacity loop of the current
+       idle-cycle project. Appears after a few seconds of inactivity.
+       Establishes "film portfolio" context and pulls the eye toward
+       the project list.
+
+       Placement AND opacity are driven by JS (pointcloud.js): as the
+       idle cycle advances through projects, the tile hops between a
+       set of edge-hugging parking spots so it never camps on one
+       piece of UI and never covers the centre / point cloud. Its
+       opacity is animated per-frame to fade in as the camera zooms
+       toward the pulsing marker, hold while zoomed in, and fade out
+       as the camera zooms back — so no CSS transition here (that
+       would lag the per-frame updates).
+       ========================================================= */
+    #idle-preview {
+      position: fixed;
+      left: 15px;             /* JS overrides per parking spot */
+      bottom: 247px;          /* JS overrides per parking spot */
+      width: 280px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    #idle-preview .ip-frame {
+      position: relative;
+      width: 100%;
+      height: 158px;
+      overflow: hidden;
+      background: #000;
+    }
+    #idle-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0.78;
+    }
+    /* Caption beneath the preview — the closest thing to a guiding label.
+       Reads as a film-strip slate, not a scroll prompt. The downward arrow
+       gently breathes to hint at the scroll mechanic. */
+    #idle-preview .ip-caption {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font: 500 10px/1 'Courier New', monospace;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.78);
+    }
+    #idle-preview .ip-caption .ip-label { opacity: 0.85; }
+    #idle-preview .ip-caption .ip-arrow {
+      display: inline-block;
+      animation: ip-arrow-bob 1.6s ease-in-out infinite;
+    }
+    @keyframes ip-arrow-bob {
+      0%, 100% { transform: translateY(0);   opacity: 0.55; }
+      50%      { transform: translateY(4px); opacity: 1.0;  }
+    }
+    /* Subtle bracket marks framing the preview, matching the existing
+       thumb-wrap brackets used on the focused-state thumbnail. */
+    #idle-preview .ip-bracket {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-color: rgba(255,255,255,0.7);
+      border-style: solid;
+      border-width: 0;
+    }
+    #idle-preview .ip-tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
+    #idle-preview .ip-tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
+    #idle-preview .ip-bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
+    #idle-preview .ip-br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+
+    @media (max-width: 768px) {
+      /* On mobile, hide the idle preview — screen real estate is too tight
+         and the project list itself is already prominent. */
+      #idle-preview { display: none; }
+    }
+  </style>
+</head>
+<body class="page-home page-pointcloud">
+
+  <!-- Vignette overlay: sits above the cloud canvas but below all UI -->
+  <div id="pc-vignette"></div>
+
+  <!-- Idle preview tile: small off-centre loop of project 1, shown only
+       after a few seconds of inactivity on the home page. -->
+  <div id="idle-preview" aria-hidden="true">
+    <div class="ip-frame">
+      <img id="idle-preview-img" alt="" />
+      <span class="ip-bracket ip-tl"></span>
+      <span class="ip-bracket ip-tr"></span>
+      <span class="ip-bracket ip-bl"></span>
+      <span class="ip-bracket ip-br"></span>
+    </div>
+    <div class="ip-caption">
+      <span class="ip-label">Selected Works</span>
+      <span class="ip-arrow">↓</span>
+    </div>
+  </div>
+
+  <!-- Nav and bottom-bar mount points; the JS injectors fill these in -->
+  <div id="nav-mount"></div>
+
+  <!-- Top-center: scene identifier -->
+  <div id="site-loc">
+    <div class="loc-name">Idaho Sawtooth Range</div>
+    <div>43.9498° N&nbsp;&nbsp;114.9558° W</div>
+  </div>
+
+  <!-- Bottom-left: project table -->
+  <div id="project-table">
+    <div class="work-row" data-idx="0" data-lat="40.7128° N" data-lng="74.0060° W">
+      <div class="wc wc-num">[001]</div>
+      <div class="wc wc-client">DODGE</div>
+      <div class="wc wc-title">NO MATTER</div>
+      <div class="wc wc-coord"><span class="coord-lat">40.7128&deg; N</span><span class="coord-sep">&nbsp;&nbsp;&nbsp;</span><span class="coord-lng">74.0060&deg; W</span></div>
+    </div>
+    <div class="work-row" data-idx="1" data-lat="35.6764° N" data-lng="139.6500° E">
+      <div class="wc wc-num">[002]</div>
+      <div class="wc wc-client">SRIXON</div>
+      <div class="wc wc-title">OBSESSED WITH IT</div>
+      <div class="wc wc-coord"><span class="coord-lat">35.6764&deg; N</span><span class="coord-sep">&nbsp;&nbsp;</span><span class="coord-lng">139.6500&deg; E</span></div>
+    </div>
+    <div class="work-row" data-idx="2" data-lat="34.0549° N" data-lng="118.2426° W">
+      <div class="wc wc-num">[004]</div>
+      <div class="wc wc-client">WILLETT</div>
+      <div class="wc wc-title">CM-G1</div>
+      <div class="wc wc-coord"><span class="coord-lat">34.0549&deg; N</span><span class="coord-sep">&nbsp;&nbsp;</span><span class="coord-lng">118.2426&deg; W</span></div>
+    </div>
+    <div class="work-row" data-idx="3" data-lat="29.4252° N" data-lng="98.4946° W">
+      <div class="wc wc-num">[005]</div>
+      <div class="wc wc-client">NIKE</div>
+      <div class="wc wc-title">VICTOR WEMBANYAMA</div>
+      <div class="wc wc-coord"><span class="coord-lat">29.4252&deg; N</span><span class="coord-sep">&nbsp;&nbsp;&nbsp;</span><span class="coord-lng">98.4946&deg; W</span></div>
+    </div>
+    <div class="work-row" data-idx="4" data-lat="59.4370° N" data-lng="24.7536° E">
+      <div class="wc wc-num">[007]</div>
+      <div class="wc wc-client">BOLT</div>
+      <div class="wc wc-title">THE LAZY ONES</div>
+      <div class="wc wc-coord"><span class="coord-lat">59.4370&deg; N</span><span class="coord-sep">&nbsp;&nbsp;&nbsp;</span><span class="coord-lng">24.7536&deg; E</span></div>
+    </div>
+  </div>
+
+  <!-- Center: thumbnail preview (shown on focused state) -->
+  <div id="thumb-wrap">
+    <a id="thumb-link" href="#" target="_self">
+      <img id="thumb-img" alt="">
+      <span class="bracket br-tl"></span>
+      <span class="bracket br-tr"></span>
+      <span class="bracket br-bl"></span>
+      <span class="bracket br-br"></span>
+    </a>
+    <div id="thumb-caption">View Project →</div>
+  </div>
+
+  <div id="status">Loading…</div>
+
+  <!-- Bottom bar mount -->
+  <div id="bottom-bar-mount"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/nav.js"></script>
+  <script src="assets/js/bottom-bar.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>window.POINTCLOUD_MODE = 'interactive';</script>
+  <script src="assets/js/pointcloud.js"></script>
+</body>
+</html>

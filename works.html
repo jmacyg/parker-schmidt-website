@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Work — Parker Schmidt</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <!-- ===== SEO / social meta =====================================
+       Work index page. og:image is a PLACEHOLDER — swap the path
+       once a real share image exists (recommended 1200×630).
+       ============================================================= -->
+  <meta name="description" content="The full index of films directed by Parker Schmidt — brand and advertising work for Dodge, Srixon, Nike, Willett, Lexus, Lululemon, Leica and more." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://parkerinfocus.com/works.html" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Parker Schmidt" />
+  <meta property="og:title" content="Work — Parker Schmidt" />
+  <meta property="og:description" content="The full index of films directed by Parker Schmidt — brand and advertising work for Dodge, Srixon, Nike, Willett, Lexus, Lululemon, Leica and more." />
+  <meta property="og:url" content="https://parkerinfocus.com/works.html" />
+  <meta property="og:image" content="https://parkerinfocus.com/assets/img/og-share.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Work — Parker Schmidt" />
+  <meta name="twitter:description" content="The full index of films directed by Parker Schmidt — brand and advertising work for Dodge, Srixon, Nike, Willett, Lexus, Lululemon, Leica and more." />
+  <meta name="twitter:image" content="https://parkerinfocus.com/assets/img/og-share.jpg" />
+
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <style>
+    /* ===== Page-specific styles (until we migrate these into site.css) ===== */
+
+    /* Push the grid down clear of the nav */
+    #idx-grid {
+      padding: 80px 20px 80px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      column-gap: 24px;
+      row-gap: 100px;
+    }
+
+    .idx-item {
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+    }
+    .idx-item[onclick] { cursor: pointer; }
+
+    /* Corner brackets — appear on hover, match home-page thumb */
+    .idx-item .bracket {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .idx-item .br-tl { top: -6px;    left: -6px;  border-top: 1px solid #fff;    border-left: 1px solid #fff; }
+    .idx-item .br-tr { top: -6px;    right: -6px; border-top: 1px solid #fff;    border-right: 1px solid #fff; }
+    .idx-item .br-bl { bottom: -6px; left: -6px;  border-bottom: 1px solid #fff; border-left: 1px solid #fff; }
+    .idx-item .br-br { bottom: -6px; right: -6px; border-bottom: 1px solid #fff; border-right: 1px solid #fff; }
+    .idx-item:hover .bracket {
+      opacity: 1;
+      animation: bracket-pulse 2.4s ease-in-out infinite;
+    }
+    .idx-item .br-tr { animation-delay: 0.15s; }
+    .idx-item .br-bl { animation-delay: 0.30s; }
+    .idx-item .br-br { animation-delay: 0.45s; }
+
+    .idx-item:hover .idx-num { color: rgba(255,255,255,0.85); }
+    .idx-item:hover .idx-client-title { color: #fff; }
+
+    .idx-num {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+    }
+
+    .idx-thumb {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #060606;
+      overflow: hidden;
+    }
+    .idx-thumb iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      pointer-events: none;
+    }
+    .idx-thumb canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .idx-thumb img,
+    .idx-thumb video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .idx-meta2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 14px;
+    }
+    .idx-client-title {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.75);
+      text-transform: uppercase;
+    }
+    /* Hide per-tile category label (COMMERCIAL / NARRATIVE / etc.) */
+    .idx-cat2 { display: none !important; }
+
+    /* Hide the bottom bar on desktop (footer covers it); show only on mobile */
+    #bottom-bar { display: none; }
+
+    @media (max-width: 1100px) {
+      #idx-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 820px) {
+      #idx-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      #idx-grid {
+        grid-template-columns: 1fr;
+        row-gap: 32px;
+        padding: 140px 10px 80px;
+      }
+      #idx-footer { display: none !important; }
+      #bottom-bar { display: flex; bottom: 20px; }
+    }
+
+    /* ===== Footer: 4 columns aligned to the project grid ===== */
+    #idx-footer {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      padding: 24px 20px 48px;
+      margin: 58px 0 0;
+      border-top: .5px solid rgba(255,255,255,0.08);
+      column-gap: 24px;
+    }
+    #idx-footer > * { padding-right: 32px; }
+    #idx-footer > *:last-child { padding-right: 0; }
+    #idx-footer .foot-eyebrow {
+      font-size: 8px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      margin-bottom: 18px;
+    }
+    #idx-footer .foot-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    #idx-footer .foot-stack a {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      line-height: 1.6;
+      transition: color .12s;
+    }
+    #idx-footer .foot-stack a:hover { color: rgba(255,255,255,0.95); }
+    #idx-footer .foot-address {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.32);
+      line-height: 1.7;
+      margin-top: 24px;
+    }
+    #idx-footer .foot-rep {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    #idx-footer .foot-rep-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      text-decoration: none;
+      padding: 0 8px;
+      margin: 0 -8px;
+      transition: background .12s;
+    }
+    #idx-footer .foot-rep-row:hover { background: rgba(255,255,255,0.03); }
+    #idx-footer .foot-rep-row span {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+      transition: color .12s;
+    }
+    #idx-footer .foot-rep-row:hover span { color: rgba(255,255,255,0.95); }
+    #idx-footer .foot-legal {
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.32);
+      line-height: 1.85;
+    }
+    #idx-footer .foot-legal a {
+      color: inherit;
+      text-decoration: none;
+      transition: color .12s;
+    }
+    #idx-footer .foot-legal a:hover { color: rgba(255,255,255,0.95); }
+  </style>
+</head>
+<body class="page-works">
+
+  <!-- Background point cloud (slow breathing/rotating) -->
+  <div id="pointcloud-bg"></div>
+  <!-- Frosted glass overlay -->
+  <div id="pointcloud-glass"></div>
+
+  <!-- Nav mount -->
+  <div id="nav-mount"></div>
+
+  <!-- Page content: project grid -->
+  <div id="page-index">
+    <div id="idx-grid">
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/dodge.html'">
+        <div class="idx-num">[001]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Dodge/dodge2.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">DODGE — NO MATTER</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="NARRATIVE" onclick="location.href='./projects/srixon-obsessed.html'">
+        <div class="idx-num">[002]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Srixon%20Obsessed/srixonobsessed5.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">SRIXON — OBSESSED WITH IT</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="ARTEFACT">
+        <div class="idx-num">[003]</div>
+        <div class="idx-thumb" style="background:transparent;"><canvas id="angel-canvas"></canvas></div>
+        <div class="idx-meta2"><div class="idx-client-title">UNDISCLOSED</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="NARRATIVE" onclick="location.href='./projects/willett.html'">
+        <div class="idx-num">[004]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Willett/willett2.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">WILLETT — CM-G1</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/nike.html'">
+        <div class="idx-num">[005]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Nike/nike1.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">NIKE — VICTOR WEMBANYAMA</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="ARTEFACT">
+        <div class="idx-num">[006]</div>
+        <div class="idx-thumb" style="background:transparent;"><canvas id="knife-canvas"></canvas></div>
+        <div class="idx-meta2"><div class="idx-client-title">UNDISCLOSED</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="MUSIC VIDEO" onclick="location.href='./projects/bolt.html'">
+        <div class="idx-num">[007]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Bolt/bolt1.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">BOLT — THE LAZY ONES</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="ARTEFACT">
+        <div class="idx-num">[008]</div>
+        <div class="idx-thumb" style="background:transparent;"><canvas id="sun-canvas"></canvas></div>
+        <div class="idx-meta2"><div class="idx-client-title">UNDISCLOSED</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="ARTEFACT">
+        <div class="idx-num">[009]</div>
+        <div class="idx-thumb" style="background:transparent;"><canvas id="wolf-canvas"></canvas></div>
+        <div class="idx-meta2"><div class="idx-client-title">UNDISCLOSED</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/lexus.html'">
+        <div class="idx-num">[010]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Lexus/lexus2.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">LEXUS — MADE DIFFERENT</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/lululemon.html'">
+        <div class="idx-num">[011]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Lululemon/lululemon1.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">LULULEMON — YET</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/chimi.html'">
+        <div class="idx-num">[012]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Chimi/chimi1.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">CHIMI — THE SPACE BETWEEN</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/lightfield.html'">
+        <div class="idx-num">[013]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Lightfield/lightfield2.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">LIGHTFIELD — BEGINNERS LUCK</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="ARTEFACT">
+        <div class="idx-num">[014]</div>
+        <div class="idx-thumb" style="background:transparent;"><canvas id="artefact-14"></canvas></div>
+        <div class="idx-meta2"><div class="idx-client-title">UNDISCLOSED</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="ARTEFACT">
+        <div class="idx-num">[015]</div>
+        <div class="idx-thumb" style="background:transparent;"><canvas id="artefact-15"></canvas></div>
+        <div class="idx-meta2"><div class="idx-client-title">UNDISCLOSED</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/bowloflife.html'">
+        <div class="idx-num">[016]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Bowl%20of%20Life/bowloflife3.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">BOWL OF LIFE</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/srixon-theironstandard.html'">
+        <div class="idx-num">[017]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Srixon%20Iron%20Standard/srixonironstandard1.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">SRIXON — THE IRON STANDARD</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/usal.html'">
+        <div class="idx-num">[018]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/USAL/usal1.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">USAL PROJECT x REI — ODE TO NATURE</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="ARTEFACT">
+        <div class="idx-num">[019]</div>
+        <div class="idx-thumb" style="background:transparent;"><canvas id="artefact-19"></canvas></div>
+        <div class="idx-meta2"><div class="idx-client-title">UNDISCLOSED</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/wsg.html'">
+        <div class="idx-num">[020]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/World%20Sports%20Games/worldsportsgames2.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">WORLD SPORTS GAMES — WATCHMEN</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/exeed.html'">
+        <div class="idx-num">[021]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Exeed/exeed1.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">EXEED — NEW WAYS FORWARD</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="ARTEFACT">
+        <div class="idx-num">[022]</div>
+        <div class="idx-thumb" style="background:transparent;"><canvas id="artefact-22"></canvas></div>
+        <div class="idx-meta2"><div class="idx-client-title">UNDISCLOSED</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/aero.html'">
+        <div class="idx-num">[023]</div>
+        <div class="idx-thumb"><iframe src="https://player.vimeo.com/video/866922772?h=de31b6585e&background=1&autoplay=1&loop=1&muted=1" loading="lazy"></iframe></div>
+        <div class="idx-meta2"><div class="idx-client-title">AERO AIRLINES — THE WAY TRAVEL WAS MEANT TO BE</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/kia.html'">
+        <div class="idx-num">[024]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Kia/kia1.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">KIA — K5</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="ARTEFACT">
+        <div class="idx-num">[025]</div>
+        <div class="idx-thumb" style="background:transparent;"><canvas id="artefact-25"></canvas></div>
+        <div class="idx-meta2"><div class="idx-client-title">UNDISCLOSED</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/cadillac.html'">
+        <div class="idx-num">[026]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Cadillac/cadillac1.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">CADILLAC — ZOË</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/requiem.html'">
+        <div class="idx-num">[027]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Requiem/requiem1.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">REQUIEM</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="ARTEFACT">
+        <div class="idx-num">[028]</div>
+        <div class="idx-thumb" style="background:transparent;"><canvas id="artefact-28"></canvas></div>
+        <div class="idx-meta2"><div class="idx-client-title">UNDISCLOSED</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/ascension.html'">
+        <div class="idx-num">[029]</div>
+        <div class="idx-thumb"><video src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Ascension/ascension1.mp4" autoplay loop muted playsinline></video></div>
+        <div class="idx-meta2"><div class="idx-client-title">ASCENSION</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="ARTEFACT">
+        <div class="idx-num">[030]</div>
+        <div class="idx-thumb" style="background:transparent;"><canvas id="artefact-30"></canvas></div>
+        <div class="idx-meta2"><div class="idx-client-title">UNDISCLOSED</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/leica.html'">
+        <div class="idx-num">[031]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Leica/Leica1.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">LEICA CAMERA — ZERO VELOCITY FT. ANDRÉ LOTTERER</div></div>
+      </div>
+
+      <div class="idx-item" data-cat="COMMERCIAL" onclick="location.href='./projects/corona.html'">
+        <div class="idx-num">[032]</div>
+        <div class="idx-thumb"><img src="https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Corona/Corona5.gif" loading="lazy" alt=""></div>
+        <div class="idx-meta2"><div class="idx-client-title">CORONA BEER — CENTER OF THE SEA</div></div>
+      </div>
+
+    </div>
+
+    <div id="idx-footer">
+      <!-- REPRESENTATION -->
+      <div class="foot-col">
+        <div class="foot-eyebrow">Representation</div>
+        <div class="foot-rep">
+          <a class="foot-rep-row" href="mailto:charlotte@canadacanada.com"><span>United States</span><span>Canada</span></a>
+          <a class="foot-rep-row" href="mailto:jencrabb@thesweetshop.tv"><span>Asia</span><span>Sweetshop</span></a>
+          <a class="foot-rep-row" href="mailto:daniel@tarotpictures.se"><span>Scandinavia</span><span>Tarot</span></a>
+          <a class="foot-rep-row" href="mailto:cam@prodbydenim.com"><span>Canada</span><span>Denim</span></a>
+          <a class="foot-rep-row" href="mailto:Harrison@mojave.productions"><span>Australia</span><span>Mojave</span></a>
+          <a class="foot-rep-row" href="mailto:peter@hovnfilms.com"><span>Austria</span><span>Hovn</span></a>
+          <a class="foot-rep-row" href="mailto:scott@equalsmgmt.com"><span>Intl</span><span>Equals Mgmt</span></a>
+          <a class="foot-rep-row" href="https://houseofspoils.com/collections/all-prints/artist-parker-schmidt" target="_blank" rel="noopener"><span>Gallery</span><span>House of Spoils</span></a>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="foot-col">
+        <div class="foot-eyebrow">Contact</div>
+        <div class="foot-stack">
+          <a href="mailto:parker@bonusrun.com">parker@bonusrun.com</a>
+          <a href="https://www.instagram.com/parker.schmidt/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://vimeo.com/schmidtparker" target="_blank" rel="noopener">Vimeo</a>
+        </div>
+        <div class="foot-address">
+          Los Angeles, CA<br>United States
+        </div>
+      </div>
+
+      <!-- PRESS -->
+      <div class="foot-col">
+        <div class="foot-eyebrow">Press</div>
+        <div class="foot-stack">
+          <a href="https://lbbonline.com/news/florence-adds-director-parker-schmidt" target="_blank" rel="noopener">Little Black Book</a>
+          <a href="https://www.c41magazine.com/the-moving-image-in-conversation-with/" target="_blank" rel="noopener">C41 Magazine</a>
+          <a href="https://theproduced.substack.com/p/shaping-the-bowl-of-life-with-parker" target="_blank" rel="noopener">The Produced</a>
+          <a href="https://www.nowness.com/picks/bowl-of-life" target="_blank" rel="noopener">Nowness</a>
+          <a href="https://www.instagram.com/p/C9SiFoCsAzA/?img_index=1" target="_blank" rel="noopener">Vision Cine</a>
+        </div>
+      </div>
+
+      <!-- LEGAL -->
+      <div class="foot-col">
+        <div class="foot-eyebrow">Legal</div>
+        <div class="foot-legal">
+          Website by CANIS 44 LTD<br>
+          Registered in England 2026<br>
+          Company No. 17128354<br>
+          <a href="https://www.canis44.com" target="_blank" rel="noopener">www.canis44.com</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom bar mount (shown on mobile only, see site.css) -->
+  <div id="bottom-bar-mount"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/nav.js"></script>
+  <script src="assets/js/bottom-bar.js"></script>
+  <script>
+    // Works-page override: on desktop, show IDAHO/time; on mobile, show
+    // the three-link slate that matches the project pages.
+    (function () {
+      var bar = document.getElementById('bottom-bar');
+      if (!bar) return;
+      var left   = bar.querySelector('.bb-l');
+      var center = bar.querySelector('.bb-c');
+      var right  = bar.querySelector('.bb-r');
+
+      if (window.innerWidth <= 768) {
+        // Mobile: three-link layout — matches the project pages.
+        if (left)   left.innerHTML   = '<a href="legal.html">LEGAL INFORMATION</a>';
+        if (center) center.innerHTML = '<a href="https://www.canis44.com" target="_blank" rel="noopener">WEBSITE BY CANIS44.COM</a>';
+        if (right)  right.innerHTML  = '<a href="index.html">PARKER SCHMIDT</a>';
+        return;
+      }
+
+      // Desktop: original IDAHO + live time.
+      if (left)  left.textContent  = 'IDAHO, USA';
+      if (right) {
+        right.innerHTML = '<span id="works-idaho-time">--:--:--</span>';
+        var el = document.getElementById('works-idaho-time');
+        function tick() {
+          var fmt = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'America/Boise', hour12: false,
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+          });
+          el.textContent = fmt.format(new Date());
+        }
+        tick();
+        setInterval(tick, 1000);
+      }
+    })();
+  </script>
+  <script>
+    // Inject corner brackets into every project tile
+    document.querySelectorAll('.idx-item').forEach(function (el) {
+      el.insertAdjacentHTML('beforeend',
+        '<span class="bracket br-tl"></span>' +
+        '<span class="bracket br-tr"></span>' +
+        '<span class="bracket br-bl"></span>' +
+        '<span class="bracket br-br"></span>'
+      );
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>window.POINTCLOUD_MODE = 'background';</script>
+  <script src="assets/js/pointcloud.js"></script>
+  <script src="assets/js/artefacts-init.js"></script>
+</body>
+</html>
