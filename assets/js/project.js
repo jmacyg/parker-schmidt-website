@@ -1,4 +1,17 @@
 (function(){
+  // Override the inline :hover rule on every project page so that
+  // controls visibility is driven entirely by the .show-controls class
+  // (managed by JS below). Without this override, the cursor sitting
+  // over the fullscreen hero on desktop keeps :hover true forever and
+  // controls never fade. We use !important to beat the hover rule
+  // regardless of source order or specificity.
+  const overrideCss = document.createElement('style');
+  overrideCss.textContent =
+    '.pp-hero:hover .pp-controls { opacity: 0 !important; pointer-events: none !important; }' +
+    '.pp-hero.show-controls .pp-controls,' +
+    '.pp-hero.show-controls:hover .pp-controls { opacity: 1 !important; pointer-events: auto !important; }';
+  document.head.appendChild(overrideCss);
+
   function fmt(sec){
     if(!isFinite(sec)) return '0:00';
     sec = Math.max(0, Math.floor(sec));
@@ -109,6 +122,45 @@
         toggleFullscreen();
       });
       hero.appendChild(catcher);
+
+      // ----- Auto-hide controls during playback -----
+      // While paused, controls stay visible. While playing, controls
+      // show for AUTO_HIDE_DELAY ms after any interaction (tap/move),
+      // then fade out. Tapping again to pause brings them back.
+      const AUTO_HIDE_DELAY = 2000;
+      let hideTimer = null;
+      function clearHideTimer() {
+        if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+      }
+      function showControlsNow() {
+        hero.classList.add('show-controls');
+        clearHideTimer();
+        if (playing) {
+          hideTimer = setTimeout(()=>{
+            hero.classList.remove('show-controls');
+            hideTimer = null;
+          }, AUTO_HIDE_DELAY);
+        }
+      }
+      // On play: schedule hide. On pause: keep them visible.
+      player.on('play', ()=>{ showControlsNow(); });
+      player.on('pause', ()=>{ clearHideTimer(); hero.classList.add('show-controls'); });
+      // Only count pointermove as a real interaction if the cursor has
+      // moved a meaningful distance — micro-events from the OS or
+      // sub-pixel jitter shouldn't keep controls forever-visible.
+      let lastPx = -1, lastPy = -1;
+      hero.addEventListener('pointermove', (e)=>{
+        const dx = e.clientX - lastPx;
+        const dy = e.clientY - lastPy;
+        lastPx = e.clientX;
+        lastPy = e.clientY;
+        if (lastPx < 0 || (dx*dx + dy*dy) >= 4) { // ≥2px movement
+          showControlsNow();
+        }
+      });
+      hero.addEventListener('pointerdown', showControlsNow);
+      // Start visible so first-time users see them.
+      hero.classList.add('show-controls');
 
       // ----- Replay overlay on video end -----
       // Centered icon that appears when the video finishes. Clicking
@@ -233,3 +285,4 @@
   };
   document.head.appendChild(script);
 })();
+
