@@ -142,6 +142,16 @@
     (inProjects ? '../' : '') + 'projects/nike.html',
     (inProjects ? '../' : '') + 'projects/bolt.html'
   ];
+  // Preload all project thumbnails so transitions never show a stale
+  // image while the next one is still fetching. Without this, fast
+  // scrolls between projects would briefly display the previous
+  // project's thumb (cached) before the new one arrives over the
+  // network. We hold onto the Image objects to keep them in cache.
+  var THUMB_PRELOAD = THUMB_URLS.map(function (url) {
+    var img = new Image();
+    img.src = url;
+    return img;
+  });
   // Red marker vertex indices in the Idaho 600k point cloud. Chosen via
   // KNN local-neighbour-density analysis: each index has 1100+ neighbours
   // within a 0.26-unit bubble (top 5% local density), so they're genuinely
@@ -661,18 +671,67 @@
       targetState = newState;
       transitionProgress = 0;
       transitionElapsed = 0;
+      previewReady = false;
       if (thumbWrap) thumbWrap.classList.remove('visible');
     }
 
-    var scrollCooldown = false;
-    function handleScroll(direction) {
-      if (scrollCooldown || transitionProgress < 1) return;
-      scrollCooldown = true;
-      setTimeout(function () { scrollCooldown = false; }, 200);
+    // Gate that goes false at the start of every transition and only
+    // flips back to true once the new project's preview thumbnail has
+    // decoded and faded in. Without this, fast scrolls fire before the
+    // preview is ready and end up "skipping" projects — the rotation
+    // moves on while the previous decode is still pending.
+    // Gate that goes false at the start of every transition and only
+    // flips back to true once the new project's preview thumbnail has
+    // decoded and faded in.
+    var previewReady = true;
+
+    // Trackpad inertial scrolling fires wheel events for ~1-1.5s after
+    // the user's fingers leave the surface, with steadily decreasing
+    // deltaY. We need to distinguish "still part of the same gesture"
+    // (ignore) from "a new gesture" (act on it).
+    //
+    // The rule: after a transition triggers, all wheel events are
+    // locked out until BOTH (a) the preview has finished fading in,
+    // AND (b) there's been a quiet period with no wheel events.
+    // Every incoming wheel event during the lockout extends the
+    // quiet-timer, so a long inertial tail keeps the lock active
+    // until inertia genuinely ends.
+    var wheelLockedUntil = 0;           // performance.now() target
+    var WHEEL_QUIET_AFTER_INERTIA = 250; // ms of silence required
+    var wheelQuietTimer = null;
+
+    function armWheelQuietTimer() {
+      if (wheelQuietTimer) clearTimeout(wheelQuietTimer);
+      wheelQuietTimer = setTimeout(function () {
+        wheelQuietTimer = null;
+        // If preview is ready by the time inertia ends, unlock.
+        if (previewReady && transitionProgress >= 1) {
+          wheelLockedUntil = 0;
+        }
+        // Otherwise the lock stays on until previewReady flips, and
+        // the next stray wheel event will re-arm this timer.
+      }, WHEEL_QUIET_AFTER_INERTIA);
+    }
+
+    function handleScroll(direction, idleWasActive, idleIdxAtScroll) {
+      // Any wheel event during a locked-out window extends the
+      // quiet-timer, then is ignored.
+      if (wheelLockedUntil !== 0) {
+        armWheelQuietTimer();
+        return;
+      }
+      if (transitionProgress < 1 || !previewReady) return;
 
       var next;
       if (direction > 0) {
-        if (currentState === 0) next = 1;
+        if (currentState === 0) {
+          // If the idle hint was mid-cycle when the scroll fired, land
+          // on whichever project the idle preview was showing —
+          // otherwise the first scroll feels like it "skips" past the
+          // visually highlighted project. (Captured before
+          // noteInteraction reset the idle timer.)
+          next = idleWasActive ? (idleIdxAtScroll + 1) : 1;
+        }
         else if (currentState === STATE_COUNT - 1) next = 1; // last project loops to first
         else next = currentState + 1;
       } else {
@@ -680,13 +739,26 @@
         else if (currentState === 1) next = 0;
         else next = currentState - 1;
       }
+
+      // Lock further wheel events until preview is ready AND inertia ends.
+      wheelLockedUntil = 1; // any non-zero sentinel; actual unlock is in armWheelQuietTimer
+      armWheelQuietTimer();
       startTransition(next);
+    }
+
+    // Capture whether the idle hint was active BEFORE noteInteraction()
+    // resets idleTime to 0 — otherwise handleScroll always sees idle as
+    // inactive and the "land on the highlighted project" logic never fires.
+    function wasIdleHintActive() {
+      return currentState === 0 && idleTime > IDLE_HINT_DELAY;
     }
 
     window.addEventListener('wheel', function (e) {
       e.preventDefault();
+      var idleWasActive = wasIdleHintActive();
+      var idleIdxAtScroll = idleCycleIndex;
       noteInteraction();
-      handleScroll(e.deltaY > 0 ? 1 : -1);
+      handleScroll(e.deltaY > 0 ? 1 : -1, idleWasActive, idleIdxAtScroll);
     }, { passive: false });
 
     // ----- Red-marker tap/click → snap to that project -----
@@ -734,9 +806,13 @@
 
     var touchStartY = null;
     var touchStartX = null;
+    var touchStartIdleActive = false;
+    var touchStartIdleIdx = 0;
     window.addEventListener('touchstart', function (e) {
       touchStartY = e.touches[0].clientY;
       touchStartX = e.touches[0].clientX;
+      touchStartIdleActive = wasIdleHintActive();
+      touchStartIdleIdx = idleCycleIndex;
       noteInteraction();
     });
     window.addEventListener('touchmove',  function (e) { e.preventDefault(); }, { passive: false });
@@ -751,7 +827,7 @@
       // on the renderer canvas (so taps on UI like the project table
       // don't get hijacked).
       if (Math.abs(dy) > 30) {
-        handleScroll(dy > 0 ? 1 : -1);
+        handleScroll(dy > 0 ? 1 : -1, touchStartIdleActive, touchStartIdleIdx);
       } else if (Math.abs(dx) < 10 && Math.abs(dy) < 10 &&
                  e.target === renderer.domElement) {
         var hit = tryHitMarker(endX, endY);
@@ -867,14 +943,43 @@
 
         cloudGroup.rotation.y = fromCloudRotY + (toCloudRotY - fromCloudRotY) * e;
 
-        if (transitionProgress >= 1) {
+        if (transitionProgress >= 1 && currentState !== targetState) {
           currentState = targetState;
           if (currentState > 0) {
-            if (thumbImg)  thumbImg.src = THUMB_URLS[currentState - 1];
-            if (thumbLink) thumbLink.href = PROJECT_URLS[currentState - 1];
-            if (thumbWrap) thumbWrap.classList.add('visible');
+            var idx = currentState - 1;
+            if (thumbLink) thumbLink.href = PROJECT_URLS[idx];
+            if (thumbImg) {
+              thumbImg.src = THUMB_URLS[idx];
+              // Wait for the new image to actually be decoded and
+              // ready to paint before fading in the preview. Without
+              // this, fast scrolls reveal the old src for a frame or
+              // two while the new one is still decoding.
+              //
+              // Always flip previewReady true when this resolves,
+              // even if the user has since moved on — otherwise a
+              // stale decode would leave the scroll gate stuck shut.
+              // Only call classList.add if we are still on the same
+              // project, so a slow decode can't make an old preview
+              // pop up over a newer one.
+              var pendingIdx = idx;
+              var reveal = function () {
+                if (pendingIdx === currentState - 1 && thumbWrap) {
+                  thumbWrap.classList.add('visible');
+                }
+                previewReady = true;
+              };
+              if (thumbImg.decode) {
+                thumbImg.decode().then(reveal).catch(reveal);
+              } else {
+                reveal();
+              }
+            } else {
+              if (thumbWrap) thumbWrap.classList.add('visible');
+              previewReady = true;
+            }
           } else {
             if (thumbWrap) thumbWrap.classList.remove('visible');
+            previewReady = true;
           }
         }
       } else {
@@ -990,8 +1095,16 @@
     });
     window.addEventListener('keydown', function (e) {
       // Arrow keys also drive the carousel
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { noteInteraction(); handleScroll(1); }
-      else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { noteInteraction(); handleScroll(-1); }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        var kIdle = wasIdleHintActive(), kIdx = idleCycleIndex;
+        noteInteraction();
+        handleScroll(1, kIdle, kIdx);
+      }
+      else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        var kIdle2 = wasIdleHintActive(), kIdx2 = idleCycleIndex;
+        noteInteraction();
+        handleScroll(-1, kIdle2, kIdx2);
+      }
       else { idleTime = 0; }
     });
 
