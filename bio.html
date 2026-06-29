@@ -77,11 +77,11 @@
     }
     .bio-intro-left {
       display: grid;
-      grid-template-columns: 280px auto;
+      grid-template-columns: 305px auto;
       column-gap: 24px;
       align-items: start;
       row-gap: 24px;
-      min-height: 360px;
+      min-height: 392px;
     }
     .bio-intro-right {
       min-width: 0;
@@ -95,6 +95,7 @@
          the section's bottom divider lands flush with the photo bottom
          regardless of how many lines the text wraps to. */
       margin-top: auto;
+      padding-top: 40px;
     }
     .bio-profile-section .tile-grid {
       margin-bottom: 0;
@@ -104,8 +105,8 @@
     }
     .bio-profile-section .tile .tile-sub { display: none; }
     .bio-portrait {
-      width: 280px;
-      height: 360px;
+      width: 305px;
+      height: 392px;
       object-fit: cover;
       display: block;
     }
@@ -349,12 +350,12 @@
          The selectors below cover every adjacent pair in that order. */
       #bio-intro { display: block; padding-bottom: 0; }
       .bio-intro-left { display: block; }
-      .bio-portrait { width: 100%; height: auto; aspect-ratio: 280 / 360; }
+      .bio-portrait { width: 70%; height: auto; aspect-ratio: 280 / 360; display: block; margin-left: auto; margin-right: auto; }
 
       /* 1) Picture → Profile (Profile is moved into bio-intro-left by JS).
          One text line of breathing room — the profile text reads as a
          caption to the portrait above it. */
-      .bio-intro-left .bio-profile-section { margin-top: 10px; }
+      .bio-intro-left .bio-profile-section { margin-top: 60px; }
       /* Hide the PROFILE eyebrow on mobile; the body text sits directly
          under the portrait with no header. */
       .bio-intro-left .bio-profile-section > .bio-eyebrow { display: none; }
@@ -467,6 +468,7 @@
         <div class="bio-eyebrow">Representation</div>
         <div class="bio-rep">
           <a class="bio-rep-row" href="mailto:charlotte@canadacanada.com"><span>United States</span><span>Canada</span></a>
+          <a class="bio-rep-row" href="mailto:etienne.proux@wanda.fr"><span>France</span><span>Wanda</span></a>
           <a class="bio-rep-row" href="mailto:jencrabb@thesweetshop.tv"><span>Asia</span><span>Sweetshop</span></a>
           <a class="bio-rep-row" href="mailto:daniel@tarotpictures.se"><span>Scandinavia</span><span>Tarot</span></a>
           <a class="bio-rep-row" href="mailto:cam@prodbydenim.com"><span>Canada</span><span>Denim</span></a>
@@ -534,6 +536,7 @@
         <div class="foot-eyebrow">Representation</div>
         <div class="foot-rep">
           <a class="foot-rep-row" href="mailto:charlotte@canadacanada.com"><span>United States</span><span>Canada</span></a>
+          <a class="foot-rep-row" href="mailto:etienne.proux@wanda.fr"><span>France</span><span>Wanda</span></a>
           <a class="foot-rep-row" href="mailto:jencrabb@thesweetshop.tv"><span>Asia</span><span>Sweetshop</span></a>
           <a class="foot-rep-row" href="mailto:daniel@tarotpictures.se"><span>Scandinavia</span><span>Tarot</span></a>
           <a class="foot-rep-row" href="mailto:cam@prodbydenim.com"><span>Canada</span><span>Denim</span></a>
