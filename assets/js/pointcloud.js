@@ -621,7 +621,16 @@
       idleTime = 0;
       idleCycleTimer = 0;
     }
-    var transitionDuration = 1.2;
+    // Per-transition duration. Project→project hops are short moves and
+    // feel right at the base value. Transitions that involve the OVERVIEW
+    // (the very first swipe in, or pulling back out) travel a far greater
+    // distance — zooming in from the wide overview position — so at the
+    // same duration they feel abrupt and "intense". startTransition()
+    // stretches the duration for those so the initial engagement reads as
+    // a slow, cohesive glide that matches the rest of the swipes.
+    var TRANSITION_DURATION_BASE = 1.2;     // project → project
+    var TRANSITION_DURATION_OVERVIEW = 2.0; // to/from the overview
+    var transitionDuration = TRANSITION_DURATION_BASE;
     var transitionElapsed = 0;
     var currentCamTarget = OVERVIEW_TARGET.clone();
 
@@ -645,15 +654,56 @@
       return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
 
+    // Spherical interpolation between two (non-unit) offset vectors taken
+    // from the cloud centre. We slerp the DIRECTION and ease the RADIUS
+    // separately, so the camera sweeps along a clean arc around the cloud
+    // at a smoothly varying distance — instead of cutting a straight chord
+    // that dips toward/through the centre and reads as a zoom-in/zoom-out
+    // "loop". Writes the result into `out` and returns it.
+    var _slerpFromDir = new THREE.Vector3();
+    var _slerpToDir   = new THREE.Vector3();
+    var _orbitFromOff = new THREE.Vector3();
+    var _orbitToOff   = new THREE.Vector3();
+    var _orbitOut     = new THREE.Vector3();
+    function orbitInterp(fromOff, toOff, t, out) {
+      var fromLen = fromOff.length();
+      var toLen   = toOff.length();
+      var radius  = fromLen + (toLen - fromLen) * t;
+      if (fromLen < 1e-6 || toLen < 1e-6) {
+        // Degenerate (a point sits at the centre) — fall back to a plain
+        // linear blend; there's no meaningful direction to slerp.
+        return out.copy(fromOff).lerp(toOff, t);
+      }
+      _slerpFromDir.copy(fromOff).divideScalar(fromLen);
+      _slerpToDir.copy(toOff).divideScalar(toLen);
+      var dot = Math.max(-1, Math.min(1, _slerpFromDir.dot(_slerpToDir)));
+      var theta = Math.acos(dot);
+      if (theta < 1e-3) {
+        // Nearly collinear — slerp is numerically unstable, lerp instead.
+        out.copy(_slerpFromDir).lerp(_slerpToDir, t);
+        if (out.lengthSq() > 1e-12) out.normalize();
+      } else {
+        var sinTheta = Math.sin(theta);
+        var w1 = Math.sin((1 - t) * theta) / sinTheta;
+        var w2 = Math.sin(t * theta) / sinTheta;
+        out.copy(_slerpFromDir).multiplyScalar(w1).addScaledVector(_slerpToDir, w2);
+      }
+      return out.multiplyScalar(radius);
+    }
+
     function startTransition(newState) {
       if (newState === currentState && transitionProgress >= 1) return;
       fromCamPos.copy(camera.position);
       fromCamTarget.copy(currentCamTarget);
       fromCloudRotY = cloudGroup.rotation.y;
 
-      var isForward = ((newState - currentState + STATE_COUNT) % STATE_COUNT) <= STATE_COUNT / 2;
-      var spinAmount = (newState === 0 || currentState === 0) ? Math.PI * 0.4 : Math.PI * 0.7;
-      toCloudRotY = fromCloudRotY + (isForward ? spinAmount : -spinAmount);
+      // No large per-transition cloud spin: the camera now ORBITS to the
+      // next project on a smooth arc (see orbitInterp), which already
+      // carries the eye around the cloud. Layering a big cloud rotation on
+      // top produced the disorienting "loop the loop" swoop. Keep the
+      // cloud rotation steady through the transition so the move reads as a
+      // single clean sweep.
+      toCloudRotY = fromCloudRotY;
 
       if (newState === 0) {
         toCamPos.copy(OVERVIEW_POS);
@@ -667,6 +717,14 @@
         cloudGroup.rotation.y = savedY;
         cloudGroup.updateMatrixWorld(true);
       }
+
+      // Stretch the duration for the long overview→project / project→
+      // overview move so the first swipe glides in gently instead of
+      // snapping; ordinary project→project hops keep the base timing.
+      var involvesOverview = (newState === 0 || currentState === 0);
+      transitionDuration = involvesOverview
+        ? TRANSITION_DURATION_OVERVIEW
+        : TRANSITION_DURATION_BASE;
 
       targetState = newState;
       transitionProgress = 0;
@@ -685,41 +743,24 @@
     // decoded and faded in.
     var previewReady = true;
 
-    // Trackpad inertial scrolling fires wheel events for ~1-1.5s after
-    // the user's fingers leave the surface, with steadily decreasing
-    // deltaY. We need to distinguish "still part of the same gesture"
-    // (ignore) from "a new gesture" (act on it).
+    // Trackpad inertial scrolling fires wheel events for ~1-1.5s after the
+    // user's fingers leave the surface, with steadily decreasing deltaY.
+    // We need to swallow that inertial tail so it doesn't auto-trigger a
+    // second transition, WITHOUT swallowing a genuine new swipe.
     //
-    // The rule: after a transition triggers, all wheel events are
-    // locked out until BOTH (a) the preview has finished fading in,
-    // AND (b) there's been a quiet period with no wheel events.
-    // Every incoming wheel event during the lockout extends the
-    // quiet-timer, so a long inertial tail keeps the lock active
-    // until inertia genuinely ends.
-    var wheelLockedUntil = 0;           // performance.now() target
-    var WHEEL_QUIET_AFTER_INERTIA = 250; // ms of silence required
-    var wheelQuietTimer = null;
+    // The lock is a simple time bound: when a wheel-driven transition
+    // starts, ignore wheel events until the transition finishes plus a
+    // short buffer that covers the dying inertia. Crucially the window is
+    // a fixed timestamp that incoming events DO NOT extend — otherwise a
+    // user who keeps swiping keeps pushing the unlock further out and the
+    // cloud appears frozen until they stop (the old quiet-timer bug).
+    var wheelIgnoreUntil = 0;        // performance.now() timestamp
+    var WHEEL_INERTIA_BUFFER = 300;  // ms after the transition to absorb inertia
 
-    function armWheelQuietTimer() {
-      if (wheelQuietTimer) clearTimeout(wheelQuietTimer);
-      wheelQuietTimer = setTimeout(function () {
-        wheelQuietTimer = null;
-        // If preview is ready by the time inertia ends, unlock.
-        if (previewReady && transitionProgress >= 1) {
-          wheelLockedUntil = 0;
-        }
-        // Otherwise the lock stays on until previewReady flips, and
-        // the next stray wheel event will re-arm this timer.
-      }, WHEEL_QUIET_AFTER_INERTIA);
-    }
-
-    function handleScroll(direction, idleWasActive, idleIdxAtScroll) {
-      // Any wheel event during a locked-out window extends the
-      // quiet-timer, then is ignored.
-      if (wheelLockedUntil !== 0) {
-        armWheelQuietTimer();
-        return;
-      }
+    function handleScroll(direction, idleWasActive, idleIdxAtScroll, isTouch) {
+      // Touch swipes are discrete gestures with no inertial tail, so they
+      // bypass the wheel lock entirely.
+      if (!isTouch && performance.now() < wheelIgnoreUntil) return;
       if (transitionProgress < 1 || !previewReady) return;
 
       var next;
@@ -740,10 +781,14 @@
         else next = currentState - 1;
       }
 
-      // Lock further wheel events until preview is ready AND inertia ends.
-      wheelLockedUntil = 1; // any non-zero sentinel; actual unlock is in armWheelQuietTimer
-      armWheelQuietTimer();
+      // Kick off the move first so transitionDuration is set for THIS
+      // transition (startTransition picks the longer overview duration when
+      // relevant), then bound the wheel lock to that duration plus the
+      // inertia buffer. Touch has no inertial tail, so it sets no lock.
       startTransition(next);
+      if (!isTouch) {
+        wheelIgnoreUntil = performance.now() + transitionDuration * 1000 + WHEEL_INERTIA_BUFFER;
+      }
     }
 
     // Capture whether the idle hint was active BEFORE noteInteraction()
@@ -827,7 +872,7 @@
       // on the renderer canvas (so taps on UI like the project table
       // don't get hijacked).
       if (Math.abs(dy) > 30) {
-        handleScroll(dy > 0 ? 1 : -1, touchStartIdleActive, touchStartIdleIdx);
+        handleScroll(dy > 0 ? 1 : -1, touchStartIdleActive, touchStartIdleIdx, true);
       } else if (Math.abs(dx) < 10 && Math.abs(dy) < 10 &&
                  e.target === renderer.domElement) {
         var hit = tryHitMarker(endX, endY);
@@ -936,7 +981,12 @@
         transitionProgress = Math.min(1, transitionElapsed / transitionDuration);
         var e = easeInOutCubic(transitionProgress);
 
-        camera.position.lerpVectors(fromCamPos, toCamPos, e);
+        // Orbit the camera around the cloud centre (origin) on a smooth
+        // arc rather than lerping in a straight line — see orbitInterp.
+        _orbitFromOff.subVectors(fromCamPos, OVERVIEW_TARGET);
+        _orbitToOff.subVectors(toCamPos, OVERVIEW_TARGET);
+        orbitInterp(_orbitFromOff, _orbitToOff, e, _orbitOut);
+        camera.position.copy(OVERVIEW_TARGET).add(_orbitOut);
         currentCamTarget.lerpVectors(fromCamTarget, toCamTarget, e);
         camera.up.set(0, 1, 0);
         camera.lookAt(currentCamTarget);
