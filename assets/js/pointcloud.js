@@ -621,17 +621,18 @@
       idleTime = 0;
       idleCycleTimer = 0;
     }
-    // Per-transition duration. Project→project hops are short moves and
-    // feel right at the base value. Transitions that involve the OVERVIEW
-    // (the very first swipe in, or pulling back out) travel a far greater
-    // distance — zooming in from the wide overview position — so at the
-    // same duration they feel abrupt and "intense". startTransition()
-    // stretches the duration for those so the initial engagement reads as
-    // a slow, cohesive glide that matches the rest of the swipes.
-    var TRANSITION_DURATION_BASE = 1.2;     // project → project
-    var TRANSITION_DURATION_OVERVIEW = 2.0; // to/from the overview
+    // Per-transition duration. Project→project hops use the new orbit
+    // sweep; transitions that involve the OVERVIEW (the very first swipe
+    // in, or pulling back out) use the ORIGINAL straight-line zoom, which
+    // the client preferred for the initial engagement. Both run at the
+    // same base duration so the whole experience feels cohesive.
+    var TRANSITION_DURATION_BASE = 1.2;     // project → project (orbit)
+    var TRANSITION_DURATION_OVERVIEW = 1.2; // to/from the overview (original zoom)
     var transitionDuration = TRANSITION_DURATION_BASE;
     var transitionElapsed = 0;
+    // True while the current transition is an overview↔project move, so the
+    // animate loop uses the original straight-line camera path for it.
+    var transitionIsOverview = false;
     var currentCamTarget = OVERVIEW_TARGET.clone();
 
     function getFocusedCamPos(idx) {
@@ -697,13 +698,24 @@
       fromCamTarget.copy(currentCamTarget);
       fromCloudRotY = cloudGroup.rotation.y;
 
-      // No large per-transition cloud spin: the camera now ORBITS to the
-      // next project on a smooth arc (see orbitInterp), which already
-      // carries the eye around the cloud. Layering a big cloud rotation on
-      // top produced the disorienting "loop the loop" swoop. Keep the
-      // cloud rotation steady through the transition so the move reads as a
-      // single clean sweep.
-      toCloudRotY = fromCloudRotY;
+      var involvesOverview = (newState === 0 || currentState === 0);
+      transitionIsOverview = involvesOverview;
+
+      if (involvesOverview) {
+        // ORIGINAL overview behaviour (restored at the client's request):
+        // a gentle cloud spin paired with the straight-line zoom in the
+        // animate loop. This is the initial "observe the cloud, then zoom
+        // in" move they preferred over the orbit sweep.
+        var isForward = ((newState - currentState + STATE_COUNT) % STATE_COUNT) <= STATE_COUNT / 2;
+        var spinAmount = Math.PI * 0.4;
+        toCloudRotY = fromCloudRotY + (isForward ? spinAmount : -spinAmount);
+      } else {
+        // Project→project: no large cloud spin — the camera ORBITS on a
+        // smooth arc (see orbitInterp), which already carries the eye
+        // around the cloud. Layering a big rotation on top produced the
+        // disorienting "loop the loop" swoop, so keep rotation steady.
+        toCloudRotY = fromCloudRotY;
+      }
 
       if (newState === 0) {
         toCamPos.copy(OVERVIEW_POS);
@@ -718,10 +730,6 @@
         cloudGroup.updateMatrixWorld(true);
       }
 
-      // Stretch the duration for the long overview→project / project→
-      // overview move so the first swipe glides in gently instead of
-      // snapping; ordinary project→project hops keep the base timing.
-      var involvesOverview = (newState === 0 || currentState === 0);
       transitionDuration = involvesOverview
         ? TRANSITION_DURATION_OVERVIEW
         : TRANSITION_DURATION_BASE;
@@ -981,12 +989,20 @@
         transitionProgress = Math.min(1, transitionElapsed / transitionDuration);
         var e = easeInOutCubic(transitionProgress);
 
-        // Orbit the camera around the cloud centre (origin) on a smooth
-        // arc rather than lerping in a straight line — see orbitInterp.
-        _orbitFromOff.subVectors(fromCamPos, OVERVIEW_TARGET);
-        _orbitToOff.subVectors(toCamPos, OVERVIEW_TARGET);
-        orbitInterp(_orbitFromOff, _orbitToOff, e, _orbitOut);
-        camera.position.copy(OVERVIEW_TARGET).add(_orbitOut);
+        if (transitionIsOverview) {
+          // ORIGINAL overview move: straight-line zoom between the wide
+          // overview position and the project — the "observe, then zoom
+          // in" feel the client preferred.
+          camera.position.lerpVectors(fromCamPos, toCamPos, e);
+        } else {
+          // Project→project: orbit the camera around the cloud centre
+          // (origin) on a smooth arc rather than lerping in a straight
+          // line — see orbitInterp.
+          _orbitFromOff.subVectors(fromCamPos, OVERVIEW_TARGET);
+          _orbitToOff.subVectors(toCamPos, OVERVIEW_TARGET);
+          orbitInterp(_orbitFromOff, _orbitToOff, e, _orbitOut);
+          camera.position.copy(OVERVIEW_TARGET).add(_orbitOut);
+        }
         currentCamTarget.lerpVectors(fromCamTarget, toCamTarget, e);
         camera.up.set(0, 1, 0);
         camera.lookAt(currentCamTarget);
