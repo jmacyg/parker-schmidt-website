@@ -126,20 +126,20 @@
   var workRows    = document.querySelectorAll('#project-table .work-row');
 
   // ----- Home-page project assets (only used in interactive mode) -----
-  // Order matches the [001]..[007] numbering on the works page,
-  // skipping the artefact slots (003, 006, 008).
+  // Order matches the #project-table rows on the home page; the bracketed
+  // numbers there mirror each project's slot on the works-page grid.
   var THUMB_URLS = [
-    'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Dodge/dodge2.gif',
     'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Srixon%20Obsessed/srixonobsessed5.gif',
+    'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Dodge/dodge2.gif',
+    'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/On%20Running/Cover-ProjectPage.gif',
     'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Willett/willett1.gif',
-    'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Nike/nike1.gif',
     'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Bolt/bolt1.gif'
   ];
   var PROJECT_URLS = [
-    (inProjects ? '../' : '') + 'projects/dodge.html',
     (inProjects ? '../' : '') + 'projects/srixon-obsessed.html',
+    (inProjects ? '../' : '') + 'projects/dodge.html',
+    (inProjects ? '../' : '') + 'projects/on.html',
     (inProjects ? '../' : '') + 'projects/willett.html',
-    (inProjects ? '../' : '') + 'projects/nike.html',
     (inProjects ? '../' : '') + 'projects/bolt.html'
   ];
   // Preload all project thumbnails so transitions never show a stale
