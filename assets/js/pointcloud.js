@@ -131,7 +131,7 @@
   var THUMB_URLS = [
     'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Srixon%20Obsessed/srixonobsessed5.gif',
     'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Dodge/dodge2.gif',
-    'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/On%20Running/Cover-ProjectPage.gif',
+    'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/On%20Running/Gif-ProjectShowcasepage_2.gif',
     'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Willett/willett1.gif',
     'https://pub-eda9762ae69b42e8a6152cd19a5cc486.r2.dev/Bolt/bolt1.gif'
   ];
